@@ -122,23 +122,23 @@ statement:      variable ASSIGN expression
          |  	NOP
          ;
 
-else_statement:     ELSE COLON statement
-
+/*else_statement:     ELSE COLON statement
+*/
 if_statement:       IF expression COLON statement
-            |       if_statement else_statement
-            |       if_statement ELIF expression COLON statement
+            |       IF expression COLON statement ELIF expression COLON statement
+            |       IF expression COLON statement ELSE COLON statement
             ;
 
 while_statement :	    WHILE expression COLON statement 
-                |	    while_statement else_statement
+                |	    WHILE expression COLON statement ELSE statement
                 ;
 
-for_statement :     FOR statement IN expression COLON statement 
-              |     for_statement else_statement
+for_statement :     FOR expression IN expression COLON statement 
+              |     FOR expression IN expression COLON statement ELSE statement
               ;
 
 print_statement :       PRINT
-                |       PRINT POPEN expression PCLOSE  // here
+                |       PRINT POPEN expression PCLOSE
                 ;
 
 variable :	ID
@@ -157,7 +157,7 @@ expression_list :       expression
                 ;
 
 expression :        simple_expression
-           |        simple_expression relop simple_expression  // here
+           |        simple_expression relop simple_expression  /* here*/
            ;
 
 simple_expression:      term
@@ -189,7 +189,7 @@ relop :     ELARGER
       | 	IN
       ;
 
-addop :     '+'
+addop :     '+' /*sign*/
       |     '-'
       ;
 
