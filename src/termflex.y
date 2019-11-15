@@ -5,17 +5,17 @@
 
 void yyerror(const char *str)
 {
-	fprintf(stderr, "error : %s\n", str);
+    fprintf(stderr, "error : %s\n", str);
 }
 
 int yywrap()
 {
-	 return 1;
+     return 1;
 }
 
 main()
 {
-	yyparse();
+    yyparse();
 }
 %}
 
@@ -63,137 +63,136 @@ main()
 
 %%
 
-program :    				MAINPROG ID SEMI declarations subprogram_declarations compound_statement
-				;
+program:        MAINPROG ID SEMI declarations subprogram_declarations compound_statement
+       ;
 
-declarations :				type identifier_list SEMI declarations 
-	     	     		|	EPSILON
-				;
-identifier_list : 			ID
-			       	|	ID ',' identifier_list
-				;
+declarations:       type identifier_list SEMI declarations 
+            |       EPSILON
+            ;
+identifier_list:    ID
+               |	ID COMMA identifier_list
+               ;
 
-type		:	      		standard_type
-           			|	standard_type BOPEN num BCLOSE
-				;
+type:       standard_type
+    |       standard_type BOPEN num BCLOSE
+    ;
 
-num :					INTNUM
-    				|	FLOATNUM
-				;
+num:        INTNUM
+   |        FLOATNUM
+   ;
 
-standard_type :			      	INT
-	      	      			|	FLOAT
-				;
+standard_type:      INT
+             |      FLOAT
+             ;
 
-subprogram_declarations :		subprogram_declaration subprogram_declarations
-					       		|	EPSILON
-				;
+subprogram_declarations:        subprogram_declaration subprogram_declarations
+                       |        EPSILON
+                       ;
 
-subprogram_declaration :	       	subprogram_head declarations compound_statement
-		       				;
+subprogram_declaration:     subprogram_head declarations compound_statement
+                      ;
 
-subprogram_head :			FUNCTION ID arguments COLON standard_type SEMI
-			       			|	PROCEDURE ID arguments SEMI
-				;
+subprogram_head:        FUNCTION ID arguments COLON standard_type SEMI
+               |        PROCEDURE ID arguments SEMI
+               ;
 
-arguments :				POPEN parameter_list PCLOSE
-	  	 			|	EPSILON
-				;
+arguments:      POPEN parameter_list PCLOSE
+         |      EPSILON
+         ;
 
-parameter_list :			identifier_list COLON type
-	       	     			|	identifier_list COLON type SEMI parameter_list
-				;
+parameter_list:     identifier_list COLON type
+              |     identifier_list COLON type SEMI parameter_list
+              ;
 
+compound_statement:     BEGIN statement_list END
+                  ;
 
-compound_statement :			BEGIN statement_list END
-		   		   		;
+statement_list:     statement
+              |     statement SEMI statement_list
+              ;
 
-statement_list :		        statement
-	       	      			|	statement SEMI statement_list
-				;
+statement:      variable ASSIGN expression
+         |      print_statement
+         |      procedure_statement
+         |      compound_statement
+         |      if_statement
+         |      while_statement
+         |  	for_statement
+         |  	RETURN expression
+         |  	NOP
+         ;
 
-statement :			 	variable ASSIGN expression
-	  	 			|	print_statement
-				|  	procedure_statement
-				|	compound_statement
-				|	if_statement
-				|	while_statement
-				|	for_statement
-				|	RETURN expression
-				|	NOP
-				;
+else_statement:     ELSE COLON statement
 
-else_statement :                        ELSE COLON statement
+if_statement:       IF expression COLON statement
+            |       if_statement else_statement
+            |       if_statement ELIF expression COLON statement
+            ;
 
-if_statement :			     	IF statement COLON statement
-	     			|	if_statement else_statement
-				|	if_statement ELIF statement COLON statement
-	     				;
+while_statement :	    WHILE expression COLON statement 
+                |	    while_statement else_statement
+                ;
 
-while_statement :			WHILE statement COLON statement 
-				|	while_statement else_statement
-					;
+for_statement :     FOR statement IN expression COLON statement 
+              |     for_statement else_statement
+              ;
 
-for_statement :			      	FOR statement IN expression COLON statement 
-	      			|	for_statement else_statement
-	      				;
+print_statement :       PRINT
+                |       PRINT POPEN expression PCLOSE  // here
+                ;
 
-print_statement :			PRINT
-			       			|	PRINT POPEN expression PCLOSE  // here
-				;
+variable :	ID
+         |	ID BOPEN expression BCLOSE
+         ;
 
-variable :				ID
-	 	 			|	ID ROPEN expression RCLOSE
-				;
+procedure_statement :       ID POPEN actual_parameter_expression PCLOSE
+                    ;
 
-procedure_statement :		    	ID POPEN actual_parameter_expression PCLOSE
-		    				;
+actual_parameter_expression :       EPSILON
+                            |       expression_list
+                            ;
 
-actual_parameter_expression :	    	EPSILON
-			    			    	|	expression_list
-				;
+expression_list :       expression
+                |       expression COMMA expression_list
+                ;
 
-expression_list :			expression
-						|	expression COMMA expression_list
-				;
+expression :        simple_expression
+           |        simple_expression relop simple_expression  // here
+           ;
 
-expression :			   	simple_expression
-	   	   			|	simple_expression relop simple_expression  // here
-				;
+simple_expression:      term
+                 |      term addop simple_expression
+                 ;
 
-simple_expression :		  	term
-		  		  		|	term addop simple_expression
-				;
+term :      factor
+     |      factor multop term
+     ;
 
-term :				     	factor
-          				|	factor multop term
-				;
+factor :        INTNUM
+       |        FLOATNUM
+       |    	variable
+       |    	procedure_statement
+       |    	NOT factor
+       |    	sign factor
+       ;
 
-factor :			      	INTNUM
-              				|	FLOATNUM
-				|	variable
-				|	procedure_statement
-				|	NOT factor
-				|	sign factor
-				;
+sign:       PLUS
+    |       MINUS
+    ;
 
-sign :				      	PLUS
-          				|	MINUS
-				;
+relop :     ELARGER
+      |     LARGER
+      |     ESMALLER
+      |     SMALLER
+      | 	EQUAL
+      | 	NEQUAL
+      | 	IN
+      ;
 
-relop :				      	ELARGER
-      			        |	LARGER
-				|	ESMALLER
-				|	SMALLER
-				|	EQUAL
-				|	NEQUAL
-				|	IN
-				;
+addop :     '+'
+      |     '-'
+      ;
 
-addop :					'+'
-            				|	'-'
-				;
-
-multop :			       	'*'
-              				|	'/'
-				;
+multop :        '*'
+       |        '/'
+       ;
