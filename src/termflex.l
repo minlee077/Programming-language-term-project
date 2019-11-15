@@ -1,16 +1,18 @@
 %{
 #include <stdio.h>
-#include "termflex.tab.h"
+#include "y.tab.h"
+int spaceCount = 1;
+int sourceLineCount = 1;
+int charLength = 0;
+extern int lineNumber; 
+
+int yywarp(void)
+{
+    return 1;
+}
+/*Define*/
 %}
-
-
 %%
-
-[\t]+
-
-
-
-
 in 			return IN;
 if 			return IF;
 for			return FOR;
@@ -27,37 +29,40 @@ mainprog 		return MAINPROG;
 function 		return FUNCTION;
 procedure		return PROCEDURE;
 elif			return ELIF;
-
+int             return INT;
+float           return FLOAT;
 
 [a-zA-Z]		return LETTER;
 [0-9]			return DIGIT;
-[0-9]+			return INTEGER;
-[0-9]+.[0-9]+		return FLOAT;
-[a-zA-Z][a-zA-Z0-9]*	return ID
+DIGIT+			return INTEGER;
+INTEGER.INTEGER+	return FLOAT;
+LETTER(LETTER|DIGIT)*   return ID
 
 \+			return PLUS;
 \-			return MINUS;
-\*			return MULTI;
+\*			return MULT;
 \/			return DIVISION;
-\<\=			return SMALLERE;
+\<\=			return ESMALLER;
 \<			return SMALLER;
-\>\=			return LARGERE;
+\>\=			return ELARGER;
 \>			return LARGER;
-\=\=			return SAME;
-\!\=			return NOTSAME;
+\=\=			return EQUAL;
+\!\=			return NEQUAL;
 \!			return NOT;
 
-";"			return SEMICOLON;
+";"			return SEMI;
 "."			return DOT;
 ","			return COMMA;
 "="			return EQUAL;
-"("			return PARENTHESIS_OPEN;
-")"			return PARENTHESIS_CLOSE;
+"("			return POPEN;
+")"			return PCLOSE;
 ":"			return COLON;
-"["			return BRACKET_OPEN;
-"]"			return BRACKET_CLOSE;
+"["			return BOPEN;
+"]"			return BCLOSE;
 
-[ \t]+ |
-\n 			return WHITESPACE;
-
+Comment     ;
+\\          spacecount++;
+[ \t]+ 		spacecount++;
+\n 			lineNumber++;
 %%
+/*user subprogram*/
