@@ -19,11 +19,11 @@ main()
 }
 %}
 
-%token INTEGER
+%token INTNUM
 %token ID
-%token int
-%token float
+%token INT
 %token FLOAT
+%token FLOATNUM
 %token MAINPROG
 %token FUNCTION 
 %token PROCEDURE
@@ -41,29 +41,29 @@ main()
 %token MINUS
 %token MULTI 
 %token DIVISION 
-%token SMALLERE 
+%token ESMALLER 
 %token SMALLER 
-%token LARGERE 
-%token LARGER 
-%token SAME 
-%token NOTSAME 
+%token ELARGER 
+%token LARGER
+%token EQUAL
+%token NEQUAL 
 %token NOT
-%token SEMICOLON 
+%token SEMI 
 %token COLON 
 %token DOT 
 %token EQUAL 
 %token COMMA 
-%token PARENTHESIS_OPEN 
-%token PARENETHESIS_CLOSE 
-%token BRACKET_OPEN 
-%token BRACKET_CLOSE 
+%token POPEN 
+%token PCLOSE 
+%token BOPEN 
+%token BCLOSE 
 %token FOR
 %token EPSILON
 %token ELIF
 
 %%
 
-program :    				MAINPROG ID SEMICOLON declarations subprogram_declarations compound_statement
+program :    				MAINPROG ID SEMI declarations subprogram_declarations compound_statement
 				;
 
 declarations :				type identifier_list ';' declarations 
@@ -125,16 +125,16 @@ statement :			 	variable '=' expression
 
 else_statement :                        ELSE ':' statement
 
-if_statement :			     	IF expression ':' statement
+if_statement :			     	IF statement ':' statement
 	     			|	if_statement else_statement
-				|	if_statement ELIF expression ':' statement
+				|	if_statement ELIF statement ':' statement
 	     				;
 
-while_statement :			WHILE expression ':' statement 
+while_statement :			WHILE statement ':' statement 
 				|	while_statement else_statement
 					;
 
-for_statement :			      	FOR expression IN expression ':' statement 
+for_statement :			      	FOR statement IN expression ':' statement 
 	      			|	for_statement else_statement
 	      				;
 
