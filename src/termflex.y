@@ -125,9 +125,13 @@ statement:      variable ASSIGN expression
 /*else_statement:     ELSE COLON statement
 */
 if_statement:       IF expression COLON statement
-            |       IF expression COLON statement ELIF expression COLON statement
-            |       IF expression COLON statement ELSE COLON statement
+            |       IF expression COLON statement elif_statement
             ;
+
+elif_statement:     ELIF expression COLON statement
+              |     ELSE COLON statement
+              |     ELIF expression COLON statement elif_statement
+              ;
 
 while_statement :	    WHILE expression COLON statement 
                 |	    WHILE expression COLON statement ELSE statement

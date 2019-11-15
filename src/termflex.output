@@ -1,68 +1,59 @@
 Terminals unused in grammar
 
    THEN
-   PLUS
-   MINUS
-   MULTI
+   MULT
    DIVISION
-   NOT
-   COLON
    DOT
-   EQUAL
-   COMMA
-   PARENTHESIS_OPEN
-   PARENETHESIS_CLOSE
-   BRACKET_OPEN
-   BRACKET_CLOSE
 
 
-State 46 conflicts: 2 shift/reduce
-State 47 conflicts: 1 shift/reduce
-State 48 conflicts: 1 shift/reduce
 State 70 conflicts: 1 shift/reduce
+State 116 conflicts: 2 shift/reduce
+State 120 conflicts: 1 shift/reduce
+State 134 conflicts: 1 shift/reduce
+State 138 conflicts: 2 shift/reduce
 
 
 Grammar
 
     0 $accept: program $end
 
-    1 program: MAINPROG ID SEMICOLON declarations subprogram_declarations compound_statement
+    1 program: MAINPROG ID SEMI declarations subprogram_declarations compound_statement
 
-    2 declarations: type identifier_list ';' declarations
+    2 declarations: type identifier_list SEMI declarations
     3             | EPSILON
 
     4 identifier_list: ID
-    5                | ID ',' identifier_list
+    5                | ID COMMA identifier_list
 
     6 type: standard_type
-    7     | standard_type '[' num ']'
+    7     | standard_type BOPEN num BCLOSE
 
-    8 num: INTEGER
-    9    | FLOAT
+    8 num: INTNUM
+    9    | FLOATNUM
 
-   10 standard_type: int
-   11              | float
+   10 standard_type: INT
+   11              | FLOAT
 
    12 subprogram_declarations: subprogram_declaration subprogram_declarations
    13                        | EPSILON
 
    14 subprogram_declaration: subprogram_head declarations compound_statement
 
-   15 subprogram_head: FUNCTION ID arguments ':' standard_type ';'
-   16                | PROCEDURE ID arguments ';'
+   15 subprogram_head: FUNCTION ID arguments COLON standard_type SEMI
+   16                | PROCEDURE ID arguments SEMI
 
-   17 arguments: '(' parameter_list ')'
+   17 arguments: POPEN parameter_list PCLOSE
    18          | EPSILON
 
-   19 parameter_list: identifier_list ':' type
-   20               | identifier_list ':' type ';' parameter_list
+   19 parameter_list: identifier_list COLON type
+   20               | identifier_list COLON type SEMI parameter_list
 
    21 compound_statement: BEGIN statement_list END
 
    22 statement_list: statement
-   23               | statement ';' statement_list
+   23               | statement SEMI statement_list
 
-   24 statement: variable '=' expression
+   24 statement: variable ASSIGN expression
    25          | print_statement
    26          | procedure_statement
    27          | compound_statement
@@ -72,193 +63,186 @@ Grammar
    31          | RETURN expression
    32          | NOP
 
-   33 else_statement: ELSE ':' statement
+   33 if_statement: IF expression COLON statement
+   34             | IF expression COLON statement elif_statement
 
-   34 if_statement: IF expression ':' statement
-   35             | if_statement else_statement
-   36             | if_statement ELIF expression ':' statement
+   35 elif_statement: ELIF expression COLON statement
+   36               | ELSE COLON statement
+   37               | ELIF expression COLON statement elif_statement
 
-   37 while_statement: WHILE expression ':' statement
-   38                | while_statement else_statement
+   38 while_statement: WHILE expression COLON statement
+   39                | WHILE expression COLON statement ELSE statement
 
-   39 for_statement: FOR expression IN expression ':' statement
-   40              | for_statement else_statement
+   40 for_statement: FOR expression IN expression COLON statement
+   41              | FOR expression IN expression COLON statement ELSE statement
 
-   41 print_statement: PRINT
-   42                | PRINT '(' expression ')'
+   42 print_statement: PRINT
+   43                | PRINT POPEN expression PCLOSE
 
-   43 variable: ID
-   44         | ID '[' expression ']'
+   44 variable: ID
+   45         | ID BOPEN expression BCLOSE
 
-   45 procedure_statement: ID '(' actual_parameter_expression ')'
+   46 procedure_statement: ID POPEN actual_parameter_expression PCLOSE
 
-   46 actual_parameter_expression: EPSILON
-   47                            | expression_list
+   47 actual_parameter_expression: EPSILON
+   48                            | expression_list
 
-   48 expression_list: expression
-   49                | expression ',' expression_list
+   49 expression_list: expression
+   50                | expression COMMA expression_list
 
-   50 expression: simple_expression
-   51           | simple_expression relop simple_expression
+   51 expression: simple_expression
+   52           | simple_expression relop simple_expression
 
-   52 simple_expression: term
-   53                  | term addop simple_expression
+   53 simple_expression: term
+   54                  | term addop simple_expression
 
-   54 term: factor
-   55     | factor multop term
+   55 term: factor
+   56     | factor multop term
 
-   56 factor: INTEGER
-   57       | FLOAT
-   58       | variable
-   59       | procedure_statement
-   60       | '!' factor
-   61       | sign factor
+   57 factor: INTNUM
+   58       | FLOATNUM
+   59       | variable
+   60       | procedure_statement
+   61       | NOT factor
+   62       | sign factor
 
-   62 sign: '+'
-   63     | '-'
+   63 sign: PLUS
+   64     | MINUS
 
-   64 relop: LARGERE
-   65      | LARGER
-   66      | SMALLERE
-   67      | SMALLER
-   68      | SAME
-   69      | NOTSAME
-   70      | IN
+   65 relop: ELARGER
+   66      | LARGER
+   67      | ESMALLER
+   68      | SMALLER
+   69      | EQUAL
+   70      | NEQUAL
+   71      | IN
 
-   71 addop: '+'
-   72      | '-'
+   72 addop: '+'
+   73      | '-'
 
-   73 multop: '*'
-   74       | '/'
+   74 multop: '*'
+   75       | '/'
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'!' (33) 60
-'(' (40) 17 42 45
-')' (41) 17 42 45
-'*' (42) 73
-'+' (43) 62 71
-',' (44) 5 49
-'-' (45) 63 72
-'/' (47) 74
-':' (58) 15 19 20 33 34 36 37 39
-';' (59) 2 15 16 20 23
-'=' (61) 24
-'[' (91) 7 44
-']' (93) 7 44
+'*' (42) 74
+'+' (43) 72
+'-' (45) 73
+'/' (47) 75
 error (256)
-INTEGER (258) 8 56
-ID (259) 1 4 5 15 16 43 44 45
-int (260) 10
-float (261) 11
-FLOAT (262) 9 57
+INTNUM (258) 8 57
+ID (259) 1 4 5 15 16 44 45 46
+INT (260) 10
+FLOAT (261) 11
+FLOATNUM (262) 9 58
 MAINPROG (263) 1
 FUNCTION (264) 15
 PROCEDURE (265) 16
 BEGIN (266) 21
 END (267) 21
-IF (268) 34
+IF (268) 33 34
 THEN (269)
-ELSE (270) 33
+ELSE (270) 36 39 41
 NOP (271) 32
-WHILE (272) 37
+WHILE (272) 38 39
 RETURN (273) 31
-PRINT (274) 41 42
-IN (275) 39 70
-PLUS (276)
-MINUS (277)
-MULTI (278)
+PRINT (274) 42 43
+IN (275) 40 41 71
+PLUS (276) 63
+MINUS (277) 64
+MULT (278)
 DIVISION (279)
-SMALLERE (280) 66
-SMALLER (281) 67
-LARGERE (282) 64
-LARGER (283) 65
-SAME (284) 68
-NOTSAME (285) 69
-NOT (286)
-SEMICOLON (287) 1
-COLON (288)
+ESMALLER (280) 67
+SMALLER (281) 68
+ELARGER (282) 65
+LARGER (283) 66
+EQUAL (284) 69
+NEQUAL (285) 70
+NOT (286) 61
+SEMI (287) 1 2 15 16 20 23
+COLON (288) 15 19 20 33 34 35 36 37 38 39 40 41
 DOT (289)
-EQUAL (290)
-COMMA (291)
-PARENTHESIS_OPEN (292)
-PARENETHESIS_CLOSE (293)
-BRACKET_OPEN (294)
-BRACKET_CLOSE (295)
-FOR (296) 39
-EPSILON (297) 3 13 18 46
-ELIF (298) 36
+ASSIGN (290) 24
+COMMA (291) 5 50
+POPEN (292) 17 43 46
+PCLOSE (293) 17 43 46
+BOPEN (294) 7 45
+BCLOSE (295) 7 45
+FOR (296) 40 41
+EPSILON (297) 3 13 18 47
+ELIF (298) 35 37
 
 
 Nonterminals, with rules where they appear
 
-$accept (57)
+$accept (48)
     on left: 0
-program (58)
+program (49)
     on left: 1, on right: 0
-declarations (59)
+declarations (50)
     on left: 2 3, on right: 1 2 14
-identifier_list (60)
+identifier_list (51)
     on left: 4 5, on right: 2 5 19 20
-type (61)
+type (52)
     on left: 6 7, on right: 2 19 20
-num (62)
+num (53)
     on left: 8 9, on right: 7
-standard_type (63)
+standard_type (54)
     on left: 10 11, on right: 6 7 15
-subprogram_declarations (64)
+subprogram_declarations (55)
     on left: 12 13, on right: 1 12
-subprogram_declaration (65)
+subprogram_declaration (56)
     on left: 14, on right: 12
-subprogram_head (66)
+subprogram_head (57)
     on left: 15 16, on right: 14
-arguments (67)
+arguments (58)
     on left: 17 18, on right: 15 16
-parameter_list (68)
+parameter_list (59)
     on left: 19 20, on right: 17 20
-compound_statement (69)
+compound_statement (60)
     on left: 21, on right: 1 14 27
-statement_list (70)
+statement_list (61)
     on left: 22 23, on right: 21 23
-statement (71)
-    on left: 24 25 26 27 28 29 30 31 32, on right: 22 23 33 34 36 37
-    39
-else_statement (72)
-    on left: 33, on right: 35 38 40
-if_statement (73)
-    on left: 34 35 36, on right: 28 35 36
-while_statement (74)
-    on left: 37 38, on right: 29 38
-for_statement (75)
-    on left: 39 40, on right: 30 40
-print_statement (76)
-    on left: 41 42, on right: 25
-variable (77)
-    on left: 43 44, on right: 24 58
-procedure_statement (78)
-    on left: 45, on right: 26 59
-actual_parameter_expression (79)
-    on left: 46 47, on right: 45
-expression_list (80)
-    on left: 48 49, on right: 47 49
-expression (81)
-    on left: 50 51, on right: 24 31 34 36 37 39 42 44 48 49
-simple_expression (82)
-    on left: 52 53, on right: 50 51 53
-term (83)
-    on left: 54 55, on right: 52 53 55
-factor (84)
-    on left: 56 57 58 59 60 61, on right: 54 55 60 61
-sign (85)
-    on left: 62 63, on right: 61
-relop (86)
-    on left: 64 65 66 67 68 69 70, on right: 51
-addop (87)
-    on left: 71 72, on right: 53
-multop (88)
-    on left: 73 74, on right: 55
+statement (62)
+    on left: 24 25 26 27 28 29 30 31 32, on right: 22 23 33 34 35 36
+    37 38 39 40 41
+if_statement (63)
+    on left: 33 34, on right: 28
+elif_statement (64)
+    on left: 35 36 37, on right: 34 37
+while_statement (65)
+    on left: 38 39, on right: 29
+for_statement (66)
+    on left: 40 41, on right: 30
+print_statement (67)
+    on left: 42 43, on right: 25
+variable (68)
+    on left: 44 45, on right: 24 59
+procedure_statement (69)
+    on left: 46, on right: 26 60
+actual_parameter_expression (70)
+    on left: 47 48, on right: 46
+expression_list (71)
+    on left: 49 50, on right: 48 50
+expression (72)
+    on left: 51 52, on right: 24 31 33 34 35 37 38 39 40 41 43 45 49
+    50
+simple_expression (73)
+    on left: 53 54, on right: 51 52 54
+term (74)
+    on left: 55 56, on right: 53 54 56
+factor (75)
+    on left: 57 58 59 60 61 62, on right: 55 56 61 62
+sign (76)
+    on left: 63 64, on right: 62
+relop (77)
+    on left: 65 66 67 68 69 70 71, on right: 52
+addop (78)
+    on left: 72 73, on right: 54
+multop (79)
+    on left: 74 75, on right: 56
 
 
 State 0
@@ -272,7 +256,7 @@ State 0
 
 State 1
 
-    1 program: MAINPROG . ID SEMICOLON declarations subprogram_declarations compound_statement
+    1 program: MAINPROG . ID SEMI declarations subprogram_declarations compound_statement
 
     ID  shift, and go to state 3
 
@@ -286,9 +270,9 @@ State 2
 
 State 3
 
-    1 program: MAINPROG ID . SEMICOLON declarations subprogram_declarations compound_statement
+    1 program: MAINPROG ID . SEMI declarations subprogram_declarations compound_statement
 
-    SEMICOLON  shift, and go to state 5
+    SEMI  shift, and go to state 5
 
 
 State 4
@@ -300,10 +284,10 @@ State 4
 
 State 5
 
-    1 program: MAINPROG ID SEMICOLON . declarations subprogram_declarations compound_statement
+    1 program: MAINPROG ID SEMI . declarations subprogram_declarations compound_statement
 
-    int      shift, and go to state 6
-    float    shift, and go to state 7
+    INT      shift, and go to state 6
+    FLOAT    shift, and go to state 7
     EPSILON  shift, and go to state 8
 
     declarations   go to state 9
@@ -313,14 +297,14 @@ State 5
 
 State 6
 
-   10 standard_type: int .
+   10 standard_type: INT .
 
     $default  reduce using rule 10 (standard_type)
 
 
 State 7
 
-   11 standard_type: float .
+   11 standard_type: FLOAT .
 
     $default  reduce using rule 11 (standard_type)
 
@@ -334,7 +318,7 @@ State 8
 
 State 9
 
-    1 program: MAINPROG ID SEMICOLON declarations . subprogram_declarations compound_statement
+    1 program: MAINPROG ID SEMI declarations . subprogram_declarations compound_statement
 
     FUNCTION   shift, and go to state 12
     PROCEDURE  shift, and go to state 13
@@ -347,7 +331,7 @@ State 9
 
 State 10
 
-    2 declarations: type . identifier_list ';' declarations
+    2 declarations: type . identifier_list SEMI declarations
 
     ID  shift, and go to state 18
 
@@ -357,23 +341,23 @@ State 10
 State 11
 
     6 type: standard_type .
-    7     | standard_type . '[' num ']'
+    7     | standard_type . BOPEN num BCLOSE
 
-    '['  shift, and go to state 20
+    BOPEN  shift, and go to state 20
 
     $default  reduce using rule 6 (type)
 
 
 State 12
 
-   15 subprogram_head: FUNCTION . ID arguments ':' standard_type ';'
+   15 subprogram_head: FUNCTION . ID arguments COLON standard_type SEMI
 
     ID  shift, and go to state 21
 
 
 State 13
 
-   16 subprogram_head: PROCEDURE . ID arguments ';'
+   16 subprogram_head: PROCEDURE . ID arguments SEMI
 
     ID  shift, and go to state 22
 
@@ -387,7 +371,7 @@ State 14
 
 State 15
 
-    1 program: MAINPROG ID SEMICOLON declarations subprogram_declarations . compound_statement
+    1 program: MAINPROG ID SEMI declarations subprogram_declarations . compound_statement
 
     BEGIN  shift, and go to state 23
 
@@ -411,8 +395,8 @@ State 17
 
    14 subprogram_declaration: subprogram_head . declarations compound_statement
 
-    int      shift, and go to state 6
-    float    shift, and go to state 7
+    INT      shift, and go to state 6
+    FLOAT    shift, and go to state 7
     EPSILON  shift, and go to state 8
 
     declarations   go to state 26
@@ -423,46 +407,46 @@ State 17
 State 18
 
     4 identifier_list: ID .
-    5                | ID . ',' identifier_list
+    5                | ID . COMMA identifier_list
 
-    ','  shift, and go to state 27
+    COMMA  shift, and go to state 27
 
     $default  reduce using rule 4 (identifier_list)
 
 
 State 19
 
-    2 declarations: type identifier_list . ';' declarations
+    2 declarations: type identifier_list . SEMI declarations
 
-    ';'  shift, and go to state 28
+    SEMI  shift, and go to state 28
 
 
 State 20
 
-    7 type: standard_type '[' . num ']'
+    7 type: standard_type BOPEN . num BCLOSE
 
-    INTEGER  shift, and go to state 29
-    FLOAT    shift, and go to state 30
+    INTNUM    shift, and go to state 29
+    FLOATNUM  shift, and go to state 30
 
     num  go to state 31
 
 
 State 21
 
-   15 subprogram_head: FUNCTION ID . arguments ':' standard_type ';'
+   15 subprogram_head: FUNCTION ID . arguments COLON standard_type SEMI
 
-    EPSILON  shift, and go to state 32
-    '('      shift, and go to state 33
+    POPEN    shift, and go to state 32
+    EPSILON  shift, and go to state 33
 
     arguments  go to state 34
 
 
 State 22
 
-   16 subprogram_head: PROCEDURE ID . arguments ';'
+   16 subprogram_head: PROCEDURE ID . arguments SEMI
 
-    EPSILON  shift, and go to state 32
-    '('      shift, and go to state 33
+    POPEN    shift, and go to state 32
+    EPSILON  shift, and go to state 33
 
     arguments  go to state 35
 
@@ -493,7 +477,7 @@ State 23
 
 State 24
 
-    1 program: MAINPROG ID SEMICOLON declarations subprogram_declarations compound_statement .
+    1 program: MAINPROG ID SEMI declarations subprogram_declarations compound_statement .
 
     $default  reduce using rule 1 (program)
 
@@ -516,7 +500,7 @@ State 26
 
 State 27
 
-    5 identifier_list: ID ',' . identifier_list
+    5 identifier_list: ID COMMA . identifier_list
 
     ID  shift, and go to state 18
 
@@ -525,10 +509,10 @@ State 27
 
 State 28
 
-    2 declarations: type identifier_list ';' . declarations
+    2 declarations: type identifier_list SEMI . declarations
 
-    int      shift, and go to state 6
-    float    shift, and go to state 7
+    INT      shift, and go to state 6
+    FLOAT    shift, and go to state 7
     EPSILON  shift, and go to state 8
 
     declarations   go to state 54
@@ -538,35 +522,28 @@ State 28
 
 State 29
 
-    8 num: INTEGER .
+    8 num: INTNUM .
 
     $default  reduce using rule 8 (num)
 
 
 State 30
 
-    9 num: FLOAT .
+    9 num: FLOATNUM .
 
     $default  reduce using rule 9 (num)
 
 
 State 31
 
-    7 type: standard_type '[' num . ']'
+    7 type: standard_type BOPEN num . BCLOSE
 
-    ']'  shift, and go to state 55
+    BCLOSE  shift, and go to state 55
 
 
 State 32
 
-   18 arguments: EPSILON .
-
-    $default  reduce using rule 18 (arguments)
-
-
-State 33
-
-   17 arguments: '(' . parameter_list ')'
+   17 arguments: POPEN . parameter_list PCLOSE
 
     ID  shift, and go to state 18
 
@@ -574,42 +551,50 @@ State 33
     parameter_list   go to state 57
 
 
+State 33
+
+   18 arguments: EPSILON .
+
+    $default  reduce using rule 18 (arguments)
+
+
 State 34
 
-   15 subprogram_head: FUNCTION ID arguments . ':' standard_type ';'
+   15 subprogram_head: FUNCTION ID arguments . COLON standard_type SEMI
 
-    ':'  shift, and go to state 58
+    COLON  shift, and go to state 58
 
 
 State 35
 
-   16 subprogram_head: PROCEDURE ID arguments . ';'
+   16 subprogram_head: PROCEDURE ID arguments . SEMI
 
-    ';'  shift, and go to state 59
+    SEMI  shift, and go to state 59
 
 
 State 36
 
-   43 variable: ID .
-   44         | ID . '[' expression ']'
-   45 procedure_statement: ID . '(' actual_parameter_expression ')'
+   44 variable: ID .
+   45         | ID . BOPEN expression BCLOSE
+   46 procedure_statement: ID . POPEN actual_parameter_expression PCLOSE
 
-    '['  shift, and go to state 60
-    '('  shift, and go to state 61
+    POPEN  shift, and go to state 60
+    BOPEN  shift, and go to state 61
 
-    $default  reduce using rule 43 (variable)
+    $default  reduce using rule 44 (variable)
 
 
 State 37
 
-   34 if_statement: IF . expression ':' statement
+   33 if_statement: IF . expression COLON statement
+   34             | IF . expression COLON statement elif_statement
 
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
 
     variable             go to state 67
     procedure_statement  go to state 68
@@ -629,14 +614,15 @@ State 38
 
 State 39
 
-   37 while_statement: WHILE . expression ':' statement
+   38 while_statement: WHILE . expression COLON statement
+   39                | WHILE . expression COLON statement ELSE statement
 
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
 
     variable             go to state 67
     procedure_statement  go to state 68
@@ -651,12 +637,12 @@ State 40
 
    31 statement: RETURN . expression
 
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
 
     variable             go to state 67
     procedure_statement  go to state 68
@@ -669,24 +655,25 @@ State 40
 
 State 41
 
-   41 print_statement: PRINT .
-   42                | PRINT . '(' expression ')'
+   42 print_statement: PRINT .
+   43                | PRINT . POPEN expression PCLOSE
 
-    '('  shift, and go to state 76
+    POPEN  shift, and go to state 76
 
-    $default  reduce using rule 41 (print_statement)
+    $default  reduce using rule 42 (print_statement)
 
 
 State 42
 
-   39 for_statement: FOR . expression IN expression ':' statement
+   40 for_statement: FOR . expression IN expression COLON statement
+   41              | FOR . expression IN expression COLON statement ELSE statement
 
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
 
     variable             go to state 67
     procedure_statement  go to state 68
@@ -714,9 +701,9 @@ State 44
 State 45
 
    22 statement_list: statement .
-   23               | statement . ';' statement_list
+   23               | statement . SEMI statement_list
 
-    ';'  shift, and go to state 79
+    SEMI  shift, and go to state 79
 
     $default  reduce using rule 22 (statement_list)
 
@@ -724,43 +711,22 @@ State 45
 State 46
 
    28 statement: if_statement .
-   35 if_statement: if_statement . else_statement
-   36             | if_statement . ELIF expression ':' statement
 
-    ELSE  shift, and go to state 80
-    ELIF  shift, and go to state 81
-
-    ELSE      [reduce using rule 28 (statement)]
-    ELIF      [reduce using rule 28 (statement)]
     $default  reduce using rule 28 (statement)
-
-    else_statement  go to state 82
 
 
 State 47
 
    29 statement: while_statement .
-   38 while_statement: while_statement . else_statement
 
-    ELSE  shift, and go to state 80
-
-    ELSE      [reduce using rule 29 (statement)]
     $default  reduce using rule 29 (statement)
-
-    else_statement  go to state 83
 
 
 State 48
 
    30 statement: for_statement .
-   40 for_statement: for_statement . else_statement
 
-    ELSE  shift, and go to state 80
-
-    ELSE      [reduce using rule 30 (statement)]
     $default  reduce using rule 30 (statement)
-
-    else_statement  go to state 84
 
 
 State 49
@@ -772,9 +738,9 @@ State 49
 
 State 50
 
-   24 statement: variable . '=' expression
+   24 statement: variable . ASSIGN expression
 
-    '='  shift, and go to state 85
+    ASSIGN  shift, and go to state 80
 
 
 State 51
@@ -793,233 +759,235 @@ State 52
 
 State 53
 
-    5 identifier_list: ID ',' identifier_list .
+    5 identifier_list: ID COMMA identifier_list .
 
     $default  reduce using rule 5 (identifier_list)
 
 
 State 54
 
-    2 declarations: type identifier_list ';' declarations .
+    2 declarations: type identifier_list SEMI declarations .
 
     $default  reduce using rule 2 (declarations)
 
 
 State 55
 
-    7 type: standard_type '[' num ']' .
+    7 type: standard_type BOPEN num BCLOSE .
 
     $default  reduce using rule 7 (type)
 
 
 State 56
 
-   19 parameter_list: identifier_list . ':' type
-   20               | identifier_list . ':' type ';' parameter_list
+   19 parameter_list: identifier_list . COLON type
+   20               | identifier_list . COLON type SEMI parameter_list
 
-    ':'  shift, and go to state 86
+    COLON  shift, and go to state 81
 
 
 State 57
 
-   17 arguments: '(' parameter_list . ')'
+   17 arguments: POPEN parameter_list . PCLOSE
 
-    ')'  shift, and go to state 87
+    PCLOSE  shift, and go to state 82
 
 
 State 58
 
-   15 subprogram_head: FUNCTION ID arguments ':' . standard_type ';'
+   15 subprogram_head: FUNCTION ID arguments COLON . standard_type SEMI
 
-    int    shift, and go to state 6
-    float  shift, and go to state 7
+    INT    shift, and go to state 6
+    FLOAT  shift, and go to state 7
 
-    standard_type  go to state 88
+    standard_type  go to state 83
 
 
 State 59
 
-   16 subprogram_head: PROCEDURE ID arguments ';' .
+   16 subprogram_head: PROCEDURE ID arguments SEMI .
 
     $default  reduce using rule 16 (subprogram_head)
 
 
 State 60
 
-   44 variable: ID '[' . expression ']'
+   46 procedure_statement: ID POPEN . actual_parameter_expression PCLOSE
 
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
-
-    variable             go to state 67
-    procedure_statement  go to state 68
-    expression           go to state 89
-    simple_expression    go to state 70
-    term                 go to state 71
-    factor               go to state 72
-    sign                 go to state 73
-
-
-State 61
-
-   45 procedure_statement: ID '(' . actual_parameter_expression ')'
-
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    EPSILON  shift, and go to state 90
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
+    EPSILON   shift, and go to state 84
 
     variable                     go to state 67
     procedure_statement          go to state 68
-    actual_parameter_expression  go to state 91
-    expression_list              go to state 92
-    expression                   go to state 93
+    actual_parameter_expression  go to state 85
+    expression_list              go to state 86
+    expression                   go to state 87
     simple_expression            go to state 70
     term                         go to state 71
     factor                       go to state 72
     sign                         go to state 73
 
 
+State 61
+
+   45 variable: ID BOPEN . expression BCLOSE
+
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
+
+    variable             go to state 67
+    procedure_statement  go to state 68
+    expression           go to state 88
+    simple_expression    go to state 70
+    term                 go to state 71
+    factor               go to state 72
+    sign                 go to state 73
+
+
 State 62
 
-   56 factor: INTEGER .
-
-    $default  reduce using rule 56 (factor)
-
-
-State 63
-
-   57 factor: FLOAT .
+   57 factor: INTNUM .
 
     $default  reduce using rule 57 (factor)
 
 
-State 64
+State 63
 
-   60 factor: '!' . factor
-
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
-
-    variable             go to state 67
-    procedure_statement  go to state 68
-    factor               go to state 94
-    sign                 go to state 73
-
-
-State 65
-
-   62 sign: '+' .
-
-    $default  reduce using rule 62 (sign)
-
-
-State 66
-
-   63 sign: '-' .
-
-    $default  reduce using rule 63 (sign)
-
-
-State 67
-
-   58 factor: variable .
+   58 factor: FLOATNUM .
 
     $default  reduce using rule 58 (factor)
 
 
-State 68
+State 64
 
-   59 factor: procedure_statement .
+   63 sign: PLUS .
+
+    $default  reduce using rule 63 (sign)
+
+
+State 65
+
+   64 sign: MINUS .
+
+    $default  reduce using rule 64 (sign)
+
+
+State 66
+
+   61 factor: NOT . factor
+
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
+
+    variable             go to state 67
+    procedure_statement  go to state 68
+    factor               go to state 89
+    sign                 go to state 73
+
+
+State 67
+
+   59 factor: variable .
 
     $default  reduce using rule 59 (factor)
 
 
+State 68
+
+   60 factor: procedure_statement .
+
+    $default  reduce using rule 60 (factor)
+
+
 State 69
 
-   34 if_statement: IF expression . ':' statement
+   33 if_statement: IF expression . COLON statement
+   34             | IF expression . COLON statement elif_statement
 
-    ':'  shift, and go to state 95
+    COLON  shift, and go to state 90
 
 
 State 70
 
-   50 expression: simple_expression .
-   51           | simple_expression . relop simple_expression
+   51 expression: simple_expression .
+   52           | simple_expression . relop simple_expression
 
-    IN        shift, and go to state 96
-    SMALLERE  shift, and go to state 97
-    SMALLER   shift, and go to state 98
-    LARGERE   shift, and go to state 99
-    LARGER    shift, and go to state 100
-    SAME      shift, and go to state 101
-    NOTSAME   shift, and go to state 102
+    IN        shift, and go to state 91
+    ESMALLER  shift, and go to state 92
+    SMALLER   shift, and go to state 93
+    ELARGER   shift, and go to state 94
+    LARGER    shift, and go to state 95
+    EQUAL     shift, and go to state 96
+    NEQUAL    shift, and go to state 97
 
-    IN        [reduce using rule 50 (expression)]
-    $default  reduce using rule 50 (expression)
+    IN        [reduce using rule 51 (expression)]
+    $default  reduce using rule 51 (expression)
 
-    relop  go to state 103
+    relop  go to state 98
 
 
 State 71
 
-   52 simple_expression: term .
-   53                  | term . addop simple_expression
+   53 simple_expression: term .
+   54                  | term . addop simple_expression
 
-    '+'  shift, and go to state 104
-    '-'  shift, and go to state 105
+    '+'  shift, and go to state 99
+    '-'  shift, and go to state 100
 
-    $default  reduce using rule 52 (simple_expression)
+    $default  reduce using rule 53 (simple_expression)
 
-    addop  go to state 106
+    addop  go to state 101
 
 
 State 72
 
-   54 term: factor .
-   55     | factor . multop term
+   55 term: factor .
+   56     | factor . multop term
 
-    '*'  shift, and go to state 107
-    '/'  shift, and go to state 108
+    '*'  shift, and go to state 102
+    '/'  shift, and go to state 103
 
-    $default  reduce using rule 54 (term)
+    $default  reduce using rule 55 (term)
 
-    multop  go to state 109
+    multop  go to state 104
 
 
 State 73
 
-   61 factor: sign . factor
+   62 factor: sign . factor
 
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
 
     variable             go to state 67
     procedure_statement  go to state 68
-    factor               go to state 110
+    factor               go to state 105
     sign                 go to state 73
 
 
 State 74
 
-   37 while_statement: WHILE expression . ':' statement
+   38 while_statement: WHILE expression . COLON statement
+   39                | WHILE expression . COLON statement ELSE statement
 
-    ':'  shift, and go to state 111
+    COLON  shift, and go to state 106
 
 
 State 75
@@ -1031,18 +999,18 @@ State 75
 
 State 76
 
-   42 print_statement: PRINT '(' . expression ')'
+   43 print_statement: PRINT POPEN . expression PCLOSE
 
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
 
     variable             go to state 67
     procedure_statement  go to state 68
-    expression           go to state 112
+    expression           go to state 107
     simple_expression    go to state 70
     term                 go to state 71
     factor               go to state 72
@@ -1051,9 +1019,10 @@ State 76
 
 State 77
 
-   39 for_statement: FOR expression . IN expression ':' statement
+   40 for_statement: FOR expression . IN expression COLON statement
+   41              | FOR expression . IN expression COLON statement ELSE statement
 
-    IN  shift, and go to state 113
+    IN  shift, and go to state 108
 
 
 State 78
@@ -1065,7 +1034,7 @@ State 78
 
 State 79
 
-   23 statement_list: statement ';' . statement_list
+   23 statement_list: statement SEMI . statement_list
 
     ID      shift, and go to state 36
     BEGIN   shift, and go to state 23
@@ -1077,7 +1046,7 @@ State 79
     FOR     shift, and go to state 42
 
     compound_statement   go to state 43
-    statement_list       go to state 114
+    statement_list       go to state 109
     statement            go to state 45
     if_statement         go to state 46
     while_statement      go to state 47
@@ -1089,309 +1058,99 @@ State 79
 
 State 80
 
-   33 else_statement: ELSE . ':' statement
+   24 statement: variable ASSIGN . expression
 
-    ':'  shift, and go to state 115
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
+
+    variable             go to state 67
+    procedure_statement  go to state 68
+    expression           go to state 110
+    simple_expression    go to state 70
+    term                 go to state 71
+    factor               go to state 72
+    sign                 go to state 73
 
 
 State 81
 
-   36 if_statement: if_statement ELIF . expression ':' statement
+   19 parameter_list: identifier_list COLON . type
+   20               | identifier_list COLON . type SEMI parameter_list
 
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
+    INT    shift, and go to state 6
+    FLOAT  shift, and go to state 7
 
-    variable             go to state 67
-    procedure_statement  go to state 68
-    expression           go to state 116
-    simple_expression    go to state 70
-    term                 go to state 71
-    factor               go to state 72
-    sign                 go to state 73
+    type           go to state 111
+    standard_type  go to state 11
 
 
 State 82
 
-   35 if_statement: if_statement else_statement .
-
-    $default  reduce using rule 35 (if_statement)
-
-
-State 83
-
-   38 while_statement: while_statement else_statement .
-
-    $default  reduce using rule 38 (while_statement)
-
-
-State 84
-
-   40 for_statement: for_statement else_statement .
-
-    $default  reduce using rule 40 (for_statement)
-
-
-State 85
-
-   24 statement: variable '=' . expression
-
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
-
-    variable             go to state 67
-    procedure_statement  go to state 68
-    expression           go to state 117
-    simple_expression    go to state 70
-    term                 go to state 71
-    factor               go to state 72
-    sign                 go to state 73
-
-
-State 86
-
-   19 parameter_list: identifier_list ':' . type
-   20               | identifier_list ':' . type ';' parameter_list
-
-    int    shift, and go to state 6
-    float  shift, and go to state 7
-
-    type           go to state 118
-    standard_type  go to state 11
-
-
-State 87
-
-   17 arguments: '(' parameter_list ')' .
+   17 arguments: POPEN parameter_list PCLOSE .
 
     $default  reduce using rule 17 (arguments)
 
 
-State 88
+State 83
 
-   15 subprogram_head: FUNCTION ID arguments ':' standard_type . ';'
+   15 subprogram_head: FUNCTION ID arguments COLON standard_type . SEMI
 
-    ';'  shift, and go to state 119
-
-
-State 89
-
-   44 variable: ID '[' expression . ']'
-
-    ']'  shift, and go to state 120
+    SEMI  shift, and go to state 112
 
 
-State 90
+State 84
 
-   46 actual_parameter_expression: EPSILON .
-
-    $default  reduce using rule 46 (actual_parameter_expression)
-
-
-State 91
-
-   45 procedure_statement: ID '(' actual_parameter_expression . ')'
-
-    ')'  shift, and go to state 121
-
-
-State 92
-
-   47 actual_parameter_expression: expression_list .
+   47 actual_parameter_expression: EPSILON .
 
     $default  reduce using rule 47 (actual_parameter_expression)
 
 
-State 93
+State 85
 
-   48 expression_list: expression .
-   49                | expression . ',' expression_list
+   46 procedure_statement: ID POPEN actual_parameter_expression . PCLOSE
 
-    ','  shift, and go to state 122
+    PCLOSE  shift, and go to state 113
 
-    $default  reduce using rule 48 (expression_list)
 
+State 86
 
-State 94
+   48 actual_parameter_expression: expression_list .
 
-   60 factor: '!' factor .
+    $default  reduce using rule 48 (actual_parameter_expression)
 
-    $default  reduce using rule 60 (factor)
 
+State 87
 
-State 95
+   49 expression_list: expression .
+   50                | expression . COMMA expression_list
 
-   34 if_statement: IF expression ':' . statement
+    COMMA  shift, and go to state 114
 
-    ID      shift, and go to state 36
-    BEGIN   shift, and go to state 23
-    IF      shift, and go to state 37
-    NOP     shift, and go to state 38
-    WHILE   shift, and go to state 39
-    RETURN  shift, and go to state 40
-    PRINT   shift, and go to state 41
-    FOR     shift, and go to state 42
+    $default  reduce using rule 49 (expression_list)
 
-    compound_statement   go to state 43
-    statement            go to state 123
-    if_statement         go to state 46
-    while_statement      go to state 47
-    for_statement        go to state 48
-    print_statement      go to state 49
-    variable             go to state 50
-    procedure_statement  go to state 51
 
+State 88
 
-State 96
+   45 variable: ID BOPEN expression . BCLOSE
 
-   70 relop: IN .
+    BCLOSE  shift, and go to state 115
 
-    $default  reduce using rule 70 (relop)
 
+State 89
 
-State 97
-
-   66 relop: SMALLERE .
-
-    $default  reduce using rule 66 (relop)
-
-
-State 98
-
-   67 relop: SMALLER .
-
-    $default  reduce using rule 67 (relop)
-
-
-State 99
-
-   64 relop: LARGERE .
-
-    $default  reduce using rule 64 (relop)
-
-
-State 100
-
-   65 relop: LARGER .
-
-    $default  reduce using rule 65 (relop)
-
-
-State 101
-
-   68 relop: SAME .
-
-    $default  reduce using rule 68 (relop)
-
-
-State 102
-
-   69 relop: NOTSAME .
-
-    $default  reduce using rule 69 (relop)
-
-
-State 103
-
-   51 expression: simple_expression relop . simple_expression
-
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
-
-    variable             go to state 67
-    procedure_statement  go to state 68
-    simple_expression    go to state 124
-    term                 go to state 71
-    factor               go to state 72
-    sign                 go to state 73
-
-
-State 104
-
-   71 addop: '+' .
-
-    $default  reduce using rule 71 (addop)
-
-
-State 105
-
-   72 addop: '-' .
-
-    $default  reduce using rule 72 (addop)
-
-
-State 106
-
-   53 simple_expression: term addop . simple_expression
-
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
-
-    variable             go to state 67
-    procedure_statement  go to state 68
-    simple_expression    go to state 125
-    term                 go to state 71
-    factor               go to state 72
-    sign                 go to state 73
-
-
-State 107
-
-   73 multop: '*' .
-
-    $default  reduce using rule 73 (multop)
-
-
-State 108
-
-   74 multop: '/' .
-
-    $default  reduce using rule 74 (multop)
-
-
-State 109
-
-   55 term: factor multop . term
-
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
-
-    variable             go to state 67
-    procedure_statement  go to state 68
-    term                 go to state 126
-    factor               go to state 72
-    sign                 go to state 73
-
-
-State 110
-
-   61 factor: sign factor .
+   61 factor: NOT factor .
 
     $default  reduce using rule 61 (factor)
 
 
-State 111
+State 90
 
-   37 while_statement: WHILE expression ':' . statement
+   33 if_statement: IF expression COLON . statement
+   34             | IF expression COLON . statement elif_statement
 
     ID      shift, and go to state 36
     BEGIN   shift, and go to state 23
@@ -1403,7 +1162,7 @@ State 111
     FOR     shift, and go to state 42
 
     compound_statement   go to state 43
-    statement            go to state 127
+    statement            go to state 116
     if_statement         go to state 46
     while_statement      go to state 47
     for_statement        go to state 48
@@ -1412,43 +1171,381 @@ State 111
     procedure_statement  go to state 51
 
 
-State 112
+State 91
 
-   42 print_statement: PRINT '(' expression . ')'
+   71 relop: IN .
 
-    ')'  shift, and go to state 128
+    $default  reduce using rule 71 (relop)
 
 
-State 113
+State 92
 
-   39 for_statement: FOR expression IN . expression ':' statement
+   67 relop: ESMALLER .
 
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
+    $default  reduce using rule 67 (relop)
+
+
+State 93
+
+   68 relop: SMALLER .
+
+    $default  reduce using rule 68 (relop)
+
+
+State 94
+
+   65 relop: ELARGER .
+
+    $default  reduce using rule 65 (relop)
+
+
+State 95
+
+   66 relop: LARGER .
+
+    $default  reduce using rule 66 (relop)
+
+
+State 96
+
+   69 relop: EQUAL .
+
+    $default  reduce using rule 69 (relop)
+
+
+State 97
+
+   70 relop: NEQUAL .
+
+    $default  reduce using rule 70 (relop)
+
+
+State 98
+
+   52 expression: simple_expression relop . simple_expression
+
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
 
     variable             go to state 67
     procedure_statement  go to state 68
-    expression           go to state 129
+    simple_expression    go to state 117
+    term                 go to state 71
+    factor               go to state 72
+    sign                 go to state 73
+
+
+State 99
+
+   72 addop: '+' .
+
+    $default  reduce using rule 72 (addop)
+
+
+State 100
+
+   73 addop: '-' .
+
+    $default  reduce using rule 73 (addop)
+
+
+State 101
+
+   54 simple_expression: term addop . simple_expression
+
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
+
+    variable             go to state 67
+    procedure_statement  go to state 68
+    simple_expression    go to state 118
+    term                 go to state 71
+    factor               go to state 72
+    sign                 go to state 73
+
+
+State 102
+
+   74 multop: '*' .
+
+    $default  reduce using rule 74 (multop)
+
+
+State 103
+
+   75 multop: '/' .
+
+    $default  reduce using rule 75 (multop)
+
+
+State 104
+
+   56 term: factor multop . term
+
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
+
+    variable             go to state 67
+    procedure_statement  go to state 68
+    term                 go to state 119
+    factor               go to state 72
+    sign                 go to state 73
+
+
+State 105
+
+   62 factor: sign factor .
+
+    $default  reduce using rule 62 (factor)
+
+
+State 106
+
+   38 while_statement: WHILE expression COLON . statement
+   39                | WHILE expression COLON . statement ELSE statement
+
+    ID      shift, and go to state 36
+    BEGIN   shift, and go to state 23
+    IF      shift, and go to state 37
+    NOP     shift, and go to state 38
+    WHILE   shift, and go to state 39
+    RETURN  shift, and go to state 40
+    PRINT   shift, and go to state 41
+    FOR     shift, and go to state 42
+
+    compound_statement   go to state 43
+    statement            go to state 120
+    if_statement         go to state 46
+    while_statement      go to state 47
+    for_statement        go to state 48
+    print_statement      go to state 49
+    variable             go to state 50
+    procedure_statement  go to state 51
+
+
+State 107
+
+   43 print_statement: PRINT POPEN expression . PCLOSE
+
+    PCLOSE  shift, and go to state 121
+
+
+State 108
+
+   40 for_statement: FOR expression IN . expression COLON statement
+   41              | FOR expression IN . expression COLON statement ELSE statement
+
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
+
+    variable             go to state 67
+    procedure_statement  go to state 68
+    expression           go to state 122
     simple_expression    go to state 70
     term                 go to state 71
     factor               go to state 72
     sign                 go to state 73
 
 
-State 114
+State 109
 
-   23 statement_list: statement ';' statement_list .
+   23 statement_list: statement SEMI statement_list .
 
     $default  reduce using rule 23 (statement_list)
 
 
+State 110
+
+   24 statement: variable ASSIGN expression .
+
+    $default  reduce using rule 24 (statement)
+
+
+State 111
+
+   19 parameter_list: identifier_list COLON type .
+   20               | identifier_list COLON type . SEMI parameter_list
+
+    SEMI  shift, and go to state 123
+
+    $default  reduce using rule 19 (parameter_list)
+
+
+State 112
+
+   15 subprogram_head: FUNCTION ID arguments COLON standard_type SEMI .
+
+    $default  reduce using rule 15 (subprogram_head)
+
+
+State 113
+
+   46 procedure_statement: ID POPEN actual_parameter_expression PCLOSE .
+
+    $default  reduce using rule 46 (procedure_statement)
+
+
+State 114
+
+   50 expression_list: expression COMMA . expression_list
+
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
+
+    variable             go to state 67
+    procedure_statement  go to state 68
+    expression_list      go to state 124
+    expression           go to state 87
+    simple_expression    go to state 70
+    term                 go to state 71
+    factor               go to state 72
+    sign                 go to state 73
+
+
 State 115
 
-   33 else_statement: ELSE ':' . statement
+   45 variable: ID BOPEN expression BCLOSE .
+
+    $default  reduce using rule 45 (variable)
+
+
+State 116
+
+   33 if_statement: IF expression COLON statement .
+   34             | IF expression COLON statement . elif_statement
+
+    ELSE  shift, and go to state 125
+    ELIF  shift, and go to state 126
+
+    ELSE      [reduce using rule 33 (if_statement)]
+    ELIF      [reduce using rule 33 (if_statement)]
+    $default  reduce using rule 33 (if_statement)
+
+    elif_statement  go to state 127
+
+
+State 117
+
+   52 expression: simple_expression relop simple_expression .
+
+    $default  reduce using rule 52 (expression)
+
+
+State 118
+
+   54 simple_expression: term addop simple_expression .
+
+    $default  reduce using rule 54 (simple_expression)
+
+
+State 119
+
+   56 term: factor multop term .
+
+    $default  reduce using rule 56 (term)
+
+
+State 120
+
+   38 while_statement: WHILE expression COLON statement .
+   39                | WHILE expression COLON statement . ELSE statement
+
+    ELSE  shift, and go to state 128
+
+    ELSE      [reduce using rule 38 (while_statement)]
+    $default  reduce using rule 38 (while_statement)
+
+
+State 121
+
+   43 print_statement: PRINT POPEN expression PCLOSE .
+
+    $default  reduce using rule 43 (print_statement)
+
+
+State 122
+
+   40 for_statement: FOR expression IN expression . COLON statement
+   41              | FOR expression IN expression . COLON statement ELSE statement
+
+    COLON  shift, and go to state 129
+
+
+State 123
+
+   20 parameter_list: identifier_list COLON type SEMI . parameter_list
+
+    ID  shift, and go to state 18
+
+    identifier_list  go to state 56
+    parameter_list   go to state 130
+
+
+State 124
+
+   50 expression_list: expression COMMA expression_list .
+
+    $default  reduce using rule 50 (expression_list)
+
+
+State 125
+
+   36 elif_statement: ELSE . COLON statement
+
+    COLON  shift, and go to state 131
+
+
+State 126
+
+   35 elif_statement: ELIF . expression COLON statement
+   37               | ELIF . expression COLON statement elif_statement
+
+    INTNUM    shift, and go to state 62
+    ID        shift, and go to state 36
+    FLOATNUM  shift, and go to state 63
+    PLUS      shift, and go to state 64
+    MINUS     shift, and go to state 65
+    NOT       shift, and go to state 66
+
+    variable             go to state 67
+    procedure_statement  go to state 68
+    expression           go to state 132
+    simple_expression    go to state 70
+    term                 go to state 71
+    factor               go to state 72
+    sign                 go to state 73
+
+
+State 127
+
+   34 if_statement: IF expression COLON statement elif_statement .
+
+    $default  reduce using rule 34 (if_statement)
+
+
+State 128
+
+   39 while_statement: WHILE expression COLON statement ELSE . statement
 
     ID      shift, and go to state 36
     BEGIN   shift, and go to state 23
@@ -1460,7 +1557,7 @@ State 115
     FOR     shift, and go to state 42
 
     compound_statement   go to state 43
-    statement            go to state 130
+    statement            go to state 133
     if_statement         go to state 46
     while_statement      go to state 47
     for_statement        go to state 48
@@ -1469,131 +1566,40 @@ State 115
     procedure_statement  go to state 51
 
 
-State 116
-
-   36 if_statement: if_statement ELIF expression . ':' statement
-
-    ':'  shift, and go to state 131
-
-
-State 117
-
-   24 statement: variable '=' expression .
-
-    $default  reduce using rule 24 (statement)
-
-
-State 118
-
-   19 parameter_list: identifier_list ':' type .
-   20               | identifier_list ':' type . ';' parameter_list
-
-    ';'  shift, and go to state 132
-
-    $default  reduce using rule 19 (parameter_list)
-
-
-State 119
-
-   15 subprogram_head: FUNCTION ID arguments ':' standard_type ';' .
-
-    $default  reduce using rule 15 (subprogram_head)
-
-
-State 120
-
-   44 variable: ID '[' expression ']' .
-
-    $default  reduce using rule 44 (variable)
-
-
-State 121
-
-   45 procedure_statement: ID '(' actual_parameter_expression ')' .
-
-    $default  reduce using rule 45 (procedure_statement)
-
-
-State 122
-
-   49 expression_list: expression ',' . expression_list
-
-    INTEGER  shift, and go to state 62
-    ID       shift, and go to state 36
-    FLOAT    shift, and go to state 63
-    '!'      shift, and go to state 64
-    '+'      shift, and go to state 65
-    '-'      shift, and go to state 66
-
-    variable             go to state 67
-    procedure_statement  go to state 68
-    expression_list      go to state 133
-    expression           go to state 93
-    simple_expression    go to state 70
-    term                 go to state 71
-    factor               go to state 72
-    sign                 go to state 73
-
-
-State 123
-
-   34 if_statement: IF expression ':' statement .
-
-    $default  reduce using rule 34 (if_statement)
-
-
-State 124
-
-   51 expression: simple_expression relop simple_expression .
-
-    $default  reduce using rule 51 (expression)
-
-
-State 125
-
-   53 simple_expression: term addop simple_expression .
-
-    $default  reduce using rule 53 (simple_expression)
-
-
-State 126
-
-   55 term: factor multop term .
-
-    $default  reduce using rule 55 (term)
-
-
-State 127
-
-   37 while_statement: WHILE expression ':' statement .
-
-    $default  reduce using rule 37 (while_statement)
-
-
-State 128
-
-   42 print_statement: PRINT '(' expression ')' .
-
-    $default  reduce using rule 42 (print_statement)
-
-
 State 129
 
-   39 for_statement: FOR expression IN expression . ':' statement
+   40 for_statement: FOR expression IN expression COLON . statement
+   41              | FOR expression IN expression COLON . statement ELSE statement
 
-    ':'  shift, and go to state 134
+    ID      shift, and go to state 36
+    BEGIN   shift, and go to state 23
+    IF      shift, and go to state 37
+    NOP     shift, and go to state 38
+    WHILE   shift, and go to state 39
+    RETURN  shift, and go to state 40
+    PRINT   shift, and go to state 41
+    FOR     shift, and go to state 42
+
+    compound_statement   go to state 43
+    statement            go to state 134
+    if_statement         go to state 46
+    while_statement      go to state 47
+    for_statement        go to state 48
+    print_statement      go to state 49
+    variable             go to state 50
+    procedure_statement  go to state 51
 
 
 State 130
 
-   33 else_statement: ELSE ':' statement .
+   20 parameter_list: identifier_list COLON type SEMI parameter_list .
 
-    $default  reduce using rule 33 (else_statement)
+    $default  reduce using rule 20 (parameter_list)
 
 
 State 131
 
-   36 if_statement: if_statement ELIF expression ':' . statement
+   36 elif_statement: ELSE COLON . statement
 
     ID      shift, and go to state 36
     BEGIN   shift, and go to state 23
@@ -1616,24 +1622,41 @@ State 131
 
 State 132
 
-   20 parameter_list: identifier_list ':' type ';' . parameter_list
+   35 elif_statement: ELIF expression . COLON statement
+   37               | ELIF expression . COLON statement elif_statement
 
-    ID  shift, and go to state 18
-
-    identifier_list  go to state 56
-    parameter_list   go to state 136
+    COLON  shift, and go to state 136
 
 
 State 133
 
-   49 expression_list: expression ',' expression_list .
+   39 while_statement: WHILE expression COLON statement ELSE statement .
 
-    $default  reduce using rule 49 (expression_list)
+    $default  reduce using rule 39 (while_statement)
 
 
 State 134
 
-   39 for_statement: FOR expression IN expression ':' . statement
+   40 for_statement: FOR expression IN expression COLON statement .
+   41              | FOR expression IN expression COLON statement . ELSE statement
+
+    ELSE  shift, and go to state 137
+
+    ELSE      [reduce using rule 40 (for_statement)]
+    $default  reduce using rule 40 (for_statement)
+
+
+State 135
+
+   36 elif_statement: ELSE COLON statement .
+
+    $default  reduce using rule 36 (elif_statement)
+
+
+State 136
+
+   35 elif_statement: ELIF expression COLON . statement
+   37               | ELIF expression COLON . statement elif_statement
 
     ID      shift, and go to state 36
     BEGIN   shift, and go to state 23
@@ -1645,7 +1668,7 @@ State 134
     FOR     shift, and go to state 42
 
     compound_statement   go to state 43
-    statement            go to state 137
+    statement            go to state 138
     if_statement         go to state 46
     while_statement      go to state 47
     for_statement        go to state 48
@@ -1654,22 +1677,53 @@ State 134
     procedure_statement  go to state 51
 
 
-State 135
-
-   36 if_statement: if_statement ELIF expression ':' statement .
-
-    $default  reduce using rule 36 (if_statement)
-
-
-State 136
-
-   20 parameter_list: identifier_list ':' type ';' parameter_list .
-
-    $default  reduce using rule 20 (parameter_list)
-
-
 State 137
 
-   39 for_statement: FOR expression IN expression ':' statement .
+   41 for_statement: FOR expression IN expression COLON statement ELSE . statement
 
-    $default  reduce using rule 39 (for_statement)
+    ID      shift, and go to state 36
+    BEGIN   shift, and go to state 23
+    IF      shift, and go to state 37
+    NOP     shift, and go to state 38
+    WHILE   shift, and go to state 39
+    RETURN  shift, and go to state 40
+    PRINT   shift, and go to state 41
+    FOR     shift, and go to state 42
+
+    compound_statement   go to state 43
+    statement            go to state 139
+    if_statement         go to state 46
+    while_statement      go to state 47
+    for_statement        go to state 48
+    print_statement      go to state 49
+    variable             go to state 50
+    procedure_statement  go to state 51
+
+
+State 138
+
+   35 elif_statement: ELIF expression COLON statement .
+   37               | ELIF expression COLON statement . elif_statement
+
+    ELSE  shift, and go to state 125
+    ELIF  shift, and go to state 126
+
+    ELSE      [reduce using rule 35 (elif_statement)]
+    ELIF      [reduce using rule 35 (elif_statement)]
+    $default  reduce using rule 35 (elif_statement)
+
+    elif_statement  go to state 140
+
+
+State 139
+
+   41 for_statement: FOR expression IN expression COLON statement ELSE statement .
+
+    $default  reduce using rule 41 (for_statement)
+
+
+State 140
+
+   37 elif_statement: ELIF expression COLON statement elif_statement .
+
+    $default  reduce using rule 37 (elif_statement)
