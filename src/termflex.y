@@ -19,6 +19,7 @@ main()
 }
 %}
 
+
 %token INTNUM
 %token ID
 %token INT
@@ -27,7 +28,7 @@ main()
 %token MAINPROG
 %token FUNCTION 
 %token PROCEDURE
-%token BEGIN 
+%token START
 %token END
 %token IF
 %token THEN 
@@ -104,7 +105,7 @@ parameter_list:     identifier_list COLON type
               |     identifier_list COLON type SEMI parameter_list
               ;
 
-compound_statement:     BEGIN statement_list END
+compound_statement:     START statement_list END
                   ;
 
 statement_list:     statement

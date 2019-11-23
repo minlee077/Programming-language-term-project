@@ -4,7 +4,7 @@
 int spaceCount = 1;
 int sourceLineCount = 1;
 int charLength = 0;
-extern int lineNumber; 
+extern int lineNumber;
 
 int yywarp(void)
 {
@@ -12,15 +12,17 @@ int yywarp(void)
 }
 /*Define*/
 %}
+LETTER          [a-zA-Z]
+DIGIT          [0-9]
 %%
-"in" 			{return IN;}
+in 			{return IN;}
 if 			{return IF;}
 for			{return FOR;}
 end 			{return END;}
 nop 			{return NOP;}
 then 			{return THEN;}
 else 			{return ELSE;}
-begin	 		{return BEGIN;}
+begin	 		{return START;}
 while			{return WHILE;}
 print	 		{return PRINT;}
 return	 		{return RETURN;}
@@ -31,11 +33,9 @@ procedure		{return PROCEDURE;}
 elif			{return ELIF;}
 int             {return INT;}
 float           {return FLOAT;}
-[a-zA-Z]		{return LETTER;}
-[0-9]			{return DIGIT;}
 DIGIT+			{return INTNUM;}
 INTNUM.INTNUM+		{return FLOATNUM;}
-LETTER(LETTER|DIGIT)*   {return ID}
+LETTER(LETTER|DIGIT)*   {return ID;}
 
 \+			{return PLUS;}
 \-			{return MINUS;}
