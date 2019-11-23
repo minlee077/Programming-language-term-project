@@ -1,0 +1,17 @@
+mainprog testcaseWhile ;
+
+
+int[8] array;
+int i;
+
+
+begin
+	i = 0;
+
+	while i < 8 :
+		begin
+			array[i] = i;
+			i = i + 1
+		end;
+	print(array);
+end
