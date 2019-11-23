@@ -115,27 +115,33 @@ statement:      variable ASSIGN expression
          |      print_statement
          |      procedure_statement
          |      compound_statement
-         |      if_statement
-         |      while_statement
-         |  	for_statement
          |  	RETURN expression
+         |      elsable_statement
          |  	NOP
          ;
 
 /*else_statement:     ELSE COLON statement
 */
+
+else_statement :   ELSE COLON statement
+	       |   EPSILON   
+               ;
+
+elsable_statement : if_statement else_statement
+		  | while_statement else_statement
+                  | for_statement else_statement
+                  ;
+
 if_statement:       IF expression COLON statement elif_statement
-            |       IF expression COLON statement elif_statement ELSE statement
             ;
 
 elif_statement:     ELIF expression COLON statement elif_statement
 	      |     EPSILON
               ;
 
-while_statement :    WHILE expression COLON statement                
-                ;
+while_statement :    WHILE expression COLON statement                 ;
 
-for_statement :     FOR in_expression COLON statement 
+for_statement :     FOR in_expression COLON statement
               ;
 
 print_statement :       PRINT
