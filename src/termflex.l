@@ -34,8 +34,8 @@ float           return FLOAT;
 
 [a-zA-Z]		return LETTER;
 [0-9]			return DIGIT;
-DIGIT+			return INTEGER;
-INTEGER.INTEGER+	return FLOAT;
+DIGIT+			return INTNUM;
+INTNUM.INTNUM+	return FLOATNUM;
 LETTER(LETTER|DIGIT)*   return ID
 
 \+			return PLUS;
@@ -53,7 +53,7 @@ LETTER(LETTER|DIGIT)*   return ID
 ";"			return SEMI;
 "."			return DOT;
 ","			return COMMA;
-"="			return EQUAL;
+"="			return ASSIGN;
 "("			return POPEN;
 ")"			return PCLOSE;
 ":"			return COLON;

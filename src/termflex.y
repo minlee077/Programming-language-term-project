@@ -5,160 +5,196 @@
 
 void yyerror(const char *str)
 {
-	fprintf(stderr, "error : %s\n", str);
+    fprintf(stderr, "error : %s\n", str);
 }
 
 int yywrap()
 {
-	 return 1;
+     return 1;
 }
 
 main()
 {
-	yyparse();
+    yyparse();
 }
 %}
 
-
-%token INTEGER
-%token FLOAT
-%token epsilon
+%token INTNUM
 %token ID
-%token int
-%token float
-%token Keyword
-%token Operator
-%token Delimiter
-
+%token INT
+%token FLOAT
+%token FLOATNUM
+%token MAINPROG
+%token FUNCTION 
+%token PROCEDURE
+%token BEGIN 
+%token END
+%token IF 
+%token THEN 
+%token ELSE 
+%token NOP 
+%token WHILE 
+%token RETURN 
+%token PRINT 
+%token IN 
+%token PLUS
+%token MINUS
+%token MULT 
+%token DIVISION 
+%token ESMALLER 
+%token SMALLER 
+%token ELARGER 
+%token LARGER
+%token EQUAL
+%token NEQUAL 
+%token NOT
+%token SEMI 
+%token COLON 
+%token DOT 
+%token ASSIGN
+%token COMMA 
+%token POPEN 
+%token PCLOSE 
+%token BOPEN 
+%token BCLOSE 
+%token FOR
+%token EPSILON
+%token ELIF
 
 %%
 
-program :				"mainprog" ID ';' declarations subprogram_declarations compound_statement
-				;
+program:        MAINPROG ID SEMI declarations subprogram_declarations compound_statement
+       ;
 
-declarations :			    	type identifier_list ';' declarations 
-	     			|	epsilon
-				;
+declarations:       type identifier_list SEMI declarations 
+            |       EPSILON
+            ;
+identifier_list:    ID
+               |	ID COMMA identifier_list
+               ;
 
-identifier_list : 			ID
-	       			|	ID ',' identifier_list
-				;
+type:       standard_type
+    |       standard_type BOPEN num BCLOSE
+    ;
 
-type		:	      		standard_type
-     				|	standard_type '[' num ']'
-				;
-num :					INTEGER
-				|	FLOAT
-				;
+num:        INTNUM
+   |        FLOATNUM
+   ;
 
-standard_type :			      	"int"
-	      			|	"float"
-				;
+standard_type:      INT
+             |      FLOAT
+             ;
 
-subprogram_declarations :		subprogram_declaration subprogram_declarations
-		       		|	epsilon
-				;
+subprogram_declarations:        subprogram_declaration subprogram_declarations
+                       |        EPSILON
+                       ;
 
-subprogram_declaration :	       	subprogram_head declarations compound_statement
-				;
+subprogram_declaration:     subprogram_head declarations compound_statement
+                      ;
 
-subprogram_head :			"function" ID arguments ':' standard_type ';'
-	       			|	"procedure" ID arguments ';'
-				;
+subprogram_head:        FUNCTION ID arguments COLON standard_type SEMI
+               |        PROCEDURE ID arguments SEMI
+               ;
 
-arguments :				'(' parameter_list ')'
-	 			|	epsilon
-				;
+arguments:      POPEN parameter_list PCLOSE
+         |      EPSILON
+         ;
 
-parameter_list :			identifier_list ':' type
-	     			|	identifier_list ':' type ';' parameter_list
-				;
+parameter_list:     identifier_list COLON type
+              |     identifier_list COLON type SEMI parameter_list
+              ;
 
+compound_statement:     BEGIN statement_list END
+                  ;
 
-compound_statement :			"begin" statement_list "end"
-		   		;
+statement_list:     statement
+              |     statement SEMI statement_list
+              ;
 
-statement_list :		        statement
-	      			|	statement ';' statement_list
-				;
+statement:      variable ASSIGN expression
+         |      print_statement
+         |      procedure_statement
+         |      compound_statement
+         |      if_statement
+         |      while_statement
+         |  	for_statement
+         |  	RETURN expression
+         |  	NOP
+         ;
 
-statement :			 	variable '=' expression
-	 			|	print_statement
-				|  	procedure_statement
-				|	compound_statement
-				|	if_statement
-				|	while_statement
-				|	for_statement
-				|	"return" expression
-				|	"nop"
-				;
+/*else_statement:     ELSE COLON statement
+*/
 
-if_statement :			     	"if" expression ':' statement '('"elif" expression ':' statement')''*' '['"else" ':' expression ']'
-				;
-
-while_statement :			"while" expression ':' statement '['"else" ':' statement']'
-				;
-
-for_statement :			      	"for" expression "in" expression ':' statement '['"else" ':' statement']'
-				;
-
-print_statement :			"print"
-	       			|	"print" '(' expression ')'  // here
-				;
-
-variable :				ID
-	 			|	ID '[' expression ']'
-				;
-
-procedure_statement :		    	ID '(' actual_parameter_expression ')'
-				;
-
-actual_parameter_expression :	    	expression_list
-				;
-
-expression_list :			expression
-				|	expression ',' expression_list
-				;
-
-expression :			   	simple_expression
-	   			|	simple_expression relop simple_expression  // here
-				;
-
-simple_expression :		  	term
-		  		|	term addop simple_expression
-				;
-
-term :				     	factor
-     				|	factor multop term
-				;
-
-factor :			      	INTEGER
-       				|	FLOAT
-				|	variable
-				|	procedure_statement
-				|	'!' factor
-				|	sign factor
-				;
-
-sign :				      	'+'
-     				|	'-'
-				;
-
-relop :				      	">"
-			        |	">="
-				|	"<"
-				|	"<="
-				|	"=="
-				|	"!="
-				|	"in"
-				;
-
-addop :					'+'
-      				|	'-'
-				;
-
-multop :			       	'*'
-       				|	'/'
-				;
+if_statement:       IF expression THEN COLON statement
+            |       ELIF expression COLON statement
+            |       IF expression THEN COLON statement ELSE statement
+            ;
 
 
+while_statement :	    WHILE expression COLON statement 
+                |	    WHILE expression COLON statement ELSE statement
+                ;
+
+for_statement :     FOR expression IN expression COLON statement 
+              |     FOR expression IN expression COLON statement ELSE statement
+              ;
+
+print_statement :       PRINT
+                |       PRINT POPEN expression PCLOSE
+                ;
+
+variable :	ID
+         |	ID BOPEN expression BCLOSE
+         ;
+
+procedure_statement :       ID POPEN actual_parameter_expression PCLOSE
+                    ;
+
+actual_parameter_expression :       EPSILON
+                            |       expression_list
+                            ;
+
+expression_list :       expression
+                |       expression COMMA expression_list
+                ;
+
+expression :        simple_expression
+           |        simple_expression relop simple_expression  /* here*/
+           ;
+
+simple_expression:      term
+                 |      term addop simple_expression
+                 ;
+
+term :      factor
+     |      factor multop term
+     ;
+
+factor :        INTNUM
+       |        FLOATNUM
+       |    	variable
+       |    	procedure_statement
+       |    	NOT factor
+       |    	sign factor
+       ;
+
+sign:       PLUS
+    |       MINUS
+    ;
+
+relop :     ELARGER
+      |     LARGER
+      |     ESMALLER
+      |     SMALLER
+      | 	EQUAL
+      | 	NEQUAL
+      /*|     IN*/
+      ;
+
+addop :     '+' /*sign*/
+      |     '-'
+      ;
+
+multop :        '*'
+       |        '/'
+       ;
