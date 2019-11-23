@@ -111,6 +111,7 @@ statement_list:     statement
               |     statement SEMI statement_list
               ;
 
+
 statement:      variable ASSIGN expression
          |      print_statement
          |      procedure_statement
@@ -122,21 +123,21 @@ statement:      variable ASSIGN expression
          |  	NOP
          ;
 
-/*else_statement:     ELSE COLON statement
-*/
-
-if_statement:       IF expression THEN COLON statement
-            |       ELIF expression COLON statement
-            |       IF expression THEN COLON statement ELSE statement
+if_statement:    IF expression COLON statement elif_blocks ELSE COLON statement
+            |    IF expression COLON statement elif_blocks
             ;
+
+elif_blocks:    elif_blocks ELIF expression COLON statement 
+           |    %empty
+           ;
 
 
 while_statement :	    WHILE expression COLON statement 
                 |	    WHILE expression COLON statement ELSE statement
                 ;
 
-for_statement :     FOR expression IN expression COLON statement 
-              |     FOR expression IN expression COLON statement ELSE statement
+for_statement :     FOR in_expression COLON statement 
+              |     FOR in_expression COLON statement ELSE statement
               ;
 
 print_statement :       PRINT
@@ -161,6 +162,9 @@ expression_list :       expression
 expression :        simple_expression
            |        simple_expression relop simple_expression  /* here*/
            ;
+
+in_expression:    expression IN expression
+             ;
 
 simple_expression:      term
                  |      term addop simple_expression
@@ -188,7 +192,6 @@ relop :     ELARGER
       |     SMALLER
       | 	EQUAL
       | 	NEQUAL
-      /*|     IN*/
       ;
 
 addop :     '+' /*sign*/
