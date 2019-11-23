@@ -163,7 +163,8 @@ expression_list :       expression
 expression :        simple_expression
            |        simple_expression relop simple_expression  /* here*/
            ;
-
+in_expression :    expression IN expression
+              ;
 simple_expression:      term
                  |      term addop simple_expression
                  ;
@@ -190,7 +191,6 @@ relop :     ELARGER
       |     SMALLER
       | 	EQUAL
       | 	NEQUAL
-      | 	IN
       ;
 
 addop :     '+' /*sign*/
