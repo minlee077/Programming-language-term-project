@@ -1,0 +1,25 @@
+mainprog testCaseRecursion;
+
+
+
+int i;
+
+
+
+function recursion(n : int) : int;
+	begin
+		if n <= 1 :
+			return 1;
+
+		return n + recursion(n - 1)
+	end
+
+
+
+begin
+	for i = 1 in i < 6 :
+		begin
+			print(recursion(i));
+			i = i + 1
+		end
+end
