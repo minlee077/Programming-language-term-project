@@ -1,0 +1,11 @@
+mainprog testCaseArray;
+
+int a[10];
+float b;
+
+begin
+	a[1] = 2;
+	a[0] = 3;
+	a[4] = 5;
+	b = 1.1;
+end
