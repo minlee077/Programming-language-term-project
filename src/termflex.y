@@ -124,21 +124,18 @@ statement:      variable ASSIGN expression
 
 /*else_statement:     ELSE COLON statement
 */
-if_statement:       IF expression COLON statement
-            |       IF expression COLON statement elif_statement
+if_statement:       IF expression COLON statement elif_statement
+            |       IF expression COLON statement elif_statement ELSE statement
             ;
 
-elif_statement:     ELIF expression COLON statement
-              |     ELSE COLON statement
-              |     ELIF expression COLON statement elif_statement
+elif_statement:     ELIF expression COLON statement elif_statement
+	      |     EPSILON
               ;
 
-while_statement :	    WHILE expression COLON statement 
-                |	    WHILE expression COLON statement ELSE statement
+while_statement :    WHILE expression COLON statement                
                 ;
 
-for_statement :     FOR expression IN expression COLON statement 
-              |     FOR expression IN expression COLON statement ELSE statement
+for_statement :     FOR in_expression COLON statement 
               ;
 
 print_statement :       PRINT
