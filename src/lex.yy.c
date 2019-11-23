@@ -535,7 +535,7 @@ char *yytext;
 #line 1 "termflex.l"
 #line 2 "termflex.l"
 #include <stdio.h>
-#include "y.tab.h"
+#include "termflex.tab.h"
 int spaceCount = 1;
 int sourceLineCount = 1;
 int charLength = 0;
@@ -826,242 +826,242 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 16 "termflex.l"
-return IN;
+{return IN;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 17 "termflex.l"
-return IF;
+{return IF;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 18 "termflex.l"
-return FOR;
+{return FOR;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 19 "termflex.l"
-return END;
+{return END;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 20 "termflex.l"
-return NOP;
+{return NOP;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 21 "termflex.l"
-return THEN;
+{return THEN;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 22 "termflex.l"
-return ELSE;
+{return ELSE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 23 "termflex.l"
-return BEGIN;
+{return BEGIN;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 24 "termflex.l"
-return WHILE;
+{return WHILE;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 25 "termflex.l"
-return PRINT;
+{return PRINT;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 26 "termflex.l"
-return RETURN;
+{return RETURN;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 27 "termflex.l"
-return EPSILON;
+{return EPSILON;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 28 "termflex.l"
-return MAINPROG;
+{return MAINPROG;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 29 "termflex.l"
-return FUNCTION;
+{return FUNCTION;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 30 "termflex.l"
-return PROCEDURE;
+{return PROCEDURE;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 31 "termflex.l"
-return ELIF;
+{return ELIF;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 32 "termflex.l"
-return INT;
+{return INT;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 33 "termflex.l"
-return FLOAT;
+{return FLOAT;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 35 "termflex.l"
-return LETTER;
+#line 34 "termflex.l"
+{return LETTER;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 36 "termflex.l"
-return DIGIT;
+#line 35 "termflex.l"
+{return DIGIT;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 37 "termflex.l"
-return INTNUM;
+#line 36 "termflex.l"
+{return INTNUM;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 38 "termflex.l"
-return FLOATNUM;
+#line 37 "termflex.l"
+{return FLOATNUM;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 39 "termflex.l"
-return ID
+#line 38 "termflex.l"
+{return ID}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 41 "termflex.l"
-return PLUS;
+#line 40 "termflex.l"
+{return PLUS;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 42 "termflex.l"
-return MINUS;
+#line 41 "termflex.l"
+{return MINUS;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 43 "termflex.l"
-return MULT;
+#line 42 "termflex.l"
+{return MULT;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 44 "termflex.l"
-return DIVISION;
+#line 43 "termflex.l"
+{return DIVISION;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 45 "termflex.l"
-return ESMALLER;
+#line 44 "termflex.l"
+{return ESMALLER;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 46 "termflex.l"
-return SMALLER;
+#line 45 "termflex.l"
+{return SMALLER;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 47 "termflex.l"
-return ELARGER;
+#line 46 "termflex.l"
+{return ELARGER;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 48 "termflex.l"
-return LARGER;
+#line 47 "termflex.l"
+{return LARGER;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 49 "termflex.l"
-return EQUAL;
+#line 48 "termflex.l"
+{return EQUAL;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 50 "termflex.l"
-return NEQUAL;
+#line 49 "termflex.l"
+{return NEQUAL;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 51 "termflex.l"
-return NOT;
+#line 50 "termflex.l"
+{return NOT;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 53 "termflex.l"
-return SEMI;
+#line 52 "termflex.l"
+{return SEMI;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 54 "termflex.l"
-return DOT;
+#line 53 "termflex.l"
+{return DOT;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 55 "termflex.l"
-return COMMA;
+#line 54 "termflex.l"
+{return COMMA;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 56 "termflex.l"
-return ASSIGN;
+#line 55 "termflex.l"
+{return ASSIGN;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 57 "termflex.l"
-return POPEN;
+#line 56 "termflex.l"
+{return POPEN;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 58 "termflex.l"
-return PCLOSE;
+#line 57 "termflex.l"
+{return PCLOSE;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 59 "termflex.l"
-return COLON;
+#line 58 "termflex.l"
+{return COLON;}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 60 "termflex.l"
-return BOPEN;
+#line 59 "termflex.l"
+{return BOPEN;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 61 "termflex.l"
-return BCLOSE;
+#line 60 "termflex.l"
+{return BCLOSE;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 63 "termflex.l"
+#line 62 "termflex.l"
 ;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 64 "termflex.l"
-spacecount++;
+#line 63 "termflex.l"
+spaceCount++;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 65 "termflex.l"
-spacecount++;
+#line 64 "termflex.l"
+spaceCount++;
 	YY_BREAK
 case 47:
 /* rule 47 can match eol */
 YY_RULE_SETUP
-#line 66 "termflex.l"
+#line 65 "termflex.l"
 lineNumber++;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 67 "termflex.l"
+#line 66 "termflex.l"
 ECHO;
 	YY_BREAK
 #line 1068 "lex.yy.c"
@@ -2069,7 +2069,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 67 "termflex.l"
+#line 66 "termflex.l"
 
 /*user subprogram*/
 

@@ -1,6 +1,6 @@
 %{
 #include <stdio.h>
-#include "y.tab.h"
+#include "termflex.tab.h"
 int spaceCount = 1;
 int sourceLineCount = 1;
 int charLength = 0;
@@ -13,56 +13,55 @@ int yywarp(void)
 /*Define*/
 %}
 %%
-in 			return IN;
-if 			return IF;
-for			return FOR;
-end 			return END;
-nop 			return NOP;
-then 			return THEN;
-else 			return ELSE;
-begin	 		return BEGIN;
-while			return WHILE;
-print	 		return PRINT;
-return	 		return RETURN;
-epsilon			return EPSILON;
-mainprog 		return MAINPROG;
-function 		return FUNCTION;
-procedure		return PROCEDURE;
-elif			return ELIF;
-int             return INT;
-float           return FLOAT;
+"in" 			{return IN;}
+if 			{return IF;}
+for			{return FOR;}
+end 			{return END;}
+nop 			{return NOP;}
+then 			{return THEN;}
+else 			{return ELSE;}
+begin	 		{return BEGIN;}
+while			{return WHILE;}
+print	 		{return PRINT;}
+return	 		{return RETURN;}
+epsilon			{return EPSILON;}
+mainprog 		{return MAINPROG;}
+function 		{return FUNCTION;}
+procedure		{return PROCEDURE;}
+elif			{return ELIF;}
+int             {return INT;}
+float           {return FLOAT;}
+[a-zA-Z]		{return LETTER;}
+[0-9]			{return DIGIT;}
+DIGIT+			{return INTNUM;}
+INTNUM.INTNUM+		{return FLOATNUM;}
+LETTER(LETTER|DIGIT)*   {return ID}
 
-[a-zA-Z]		return LETTER;
-[0-9]			return DIGIT;
-DIGIT+			return INTNUM;
-INTNUM.INTNUM+	return FLOATNUM;
-LETTER(LETTER|DIGIT)*   return ID
+\+			{return PLUS;}
+\-			{return MINUS;}
+\*			{return MULT;}
+\/			{return DIVISION;}
+\<\=			{return ESMALLER;}
+\<			{return SMALLER;}
+\>\=			{return ELARGER;}
+\>			{return LARGER;}
+\=\=			{return EQUAL;}
+\!\=			{return NEQUAL;}
+\!			{return NOT;}
 
-\+			return PLUS;
-\-			return MINUS;
-\*			return MULT;
-\/			return DIVISION;
-\<\=			return ESMALLER;
-\<			return SMALLER;
-\>\=			return ELARGER;
-\>			return LARGER;
-\=\=			return EQUAL;
-\!\=			return NEQUAL;
-\!			return NOT;
-
-";"			return SEMI;
-"."			return DOT;
-","			return COMMA;
-"="			return ASSIGN;
-"("			return POPEN;
-")"			return PCLOSE;
-":"			return COLON;
-"["			return BOPEN;
-"]"			return BCLOSE;
+";"			{return SEMI;}
+"."			{return DOT;}
+","			{return COMMA;}
+"="			{return ASSIGN;}
+"("			{return POPEN;}
+")"			{return PCLOSE;}
+":"			{return COLON;}
+"["			{return BOPEN;}
+"]"			{return BCLOSE;}
 
 Comment     ;
-\\          spacecount++;
-[ \t]+ 		spacecount++;
+\\          spaceCount++;
+[ \t]+ 		spaceCount++;
 \n 			lineNumber++;
 %%
 /*user subprogram*/

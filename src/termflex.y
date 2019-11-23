@@ -29,7 +29,7 @@ main()
 %token PROCEDURE
 %token BEGIN 
 %token END
-%token IF 
+%token IF
 %token THEN 
 %token ELSE 
 %token NOP 
@@ -199,4 +199,4 @@ addop :     '+' /*sign*/
 
 multop :        '*'
        |        '/'
-       ;
+      ;
