@@ -1,0 +1,29 @@
+mainprog testCaseExpression
+
+int a;
+int b;
+
+begin
+	a;
+	1;
+	1.1;
+	a(1);
+	a(a);
+	a(1.1);
+	!1;
+	!a;
+	+a;
+	+1;
+	!a(1);
+	!a(a);
+	a*a;
+	a/a;
+	a+a(4);
+	a >= 1;
+	a > 1;
+	a < 1;
+	a <= 1;
+	a == 1;
+	a != 1;
+	a in 1;
+end

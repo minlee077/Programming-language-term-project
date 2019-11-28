@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+extern int lineNumber;
 
 void yyerror(const char *str)
 {
@@ -19,6 +20,7 @@ main()
 }
 %}
 
+
 %token INTNUM
 %token ID
 %token INT
@@ -27,9 +29,9 @@ main()
 %token MAINPROG
 %token FUNCTION 
 %token PROCEDURE
-%token BEGIN 
+%token START
 %token END
-%token IF 
+%token IF
 %token THEN 
 %token ELSE 
 %token NOP 
@@ -74,12 +76,8 @@ identifier_list:    ID
                ;
 
 type:       standard_type
-    |       standard_type BOPEN num BCLOSE
+    |       standard_type BOPEN INTNUM BCLOSE
     ;
-
-num:        INTNUM
-   |        FLOATNUM
-   ;
 
 standard_type:      INT
              |      FLOAT
@@ -104,40 +102,44 @@ parameter_list:     identifier_list COLON type
               |     identifier_list COLON type SEMI parameter_list
               ;
 
-compound_statement:     BEGIN statement_list END
+compound_statement:     START statement_list END
                   ;
 
 statement_list:     statement
               |     statement SEMI statement_list
               ;
 
-
 statement:      variable ASSIGN expression
          |      print_statement
          |      procedure_statement
          |      compound_statement
-         |      if_statement
-         |      while_statement
-         |  	for_statement
          |  	RETURN expression
+         |      elsable_statement
          |  	NOP
          ;
 
-if_statement:    IF expression COLON statement elif_blocks ELSE COLON statement
-            |    IF expression COLON statement elif_blocks
+/*else_statement:     ELSE COLON statement
+*/
+
+else_statement :   ELSE COLON statement
+	       |   EPSILON   
+               ;
+
+elsable_statement : if_statement else_statement
+		  | while_statement else_statement
+                  | for_statement else_statement
+                  ;
+
+if_statement:       IF expression COLON statement elif_statement
             ;
 
-elif_blocks:    elif_blocks ELIF expression COLON statement 
-           |    %empty
-           ;
+elif_statement:     ELIF expression COLON statement elif_statement
+	      |     EPSILON
+              ;
 
+while_statement :    WHILE expression COLON statement                 ;
 
-while_statement :	    WHILE expression COLON statement 
-                |	    WHILE expression COLON statement ELSE statement
-                ;
-
-for_statement :     FOR in_expression COLON statement 
-              |     FOR in_expression COLON statement ELSE statement
+for_statement :     FOR in_expression COLON statement
               ;
 
 print_statement :       PRINT
@@ -162,10 +164,8 @@ expression_list :       expression
 expression :        simple_expression
            |        simple_expression relop simple_expression  /* here*/
            ;
-
-in_expression:    expression IN expression
-             ;
-
+in_expression :    expression IN expression
+              ;
 simple_expression:      term
                  |      term addop simple_expression
                  ;
@@ -200,4 +200,4 @@ addop :     '+' /*sign*/
 
 multop :        '*'
        |        '/'
-       ;
+      ;
