@@ -10,39 +10,7 @@ void yyerror(const char *str)
     fprintf(stderr, "error : %s\n", str);
 }
 
-int yywrap()
-{
-     return 1;
-}
 
-main()
-{
-
-	FILE *fp; 
-	char filename[50]; 
-	
-	printf("Enter the filename: \n"); 
-	scanf("%s",filename); 
-
-	fp = fopen(filename,"r"); 
-
-	if(!fp)
-	{
-		fprintf(stderr,"could not open file %s\n",filename);
-		return 0;
-	}
-
-	yyin = fp; 
-	do{
-		yyparse();
-	}while(!feof(yyin));
-
-	
-	return 0 ;
-	
-
-
-}
 %}
 
 
@@ -85,7 +53,6 @@ main()
 %token BOPEN 
 %token BCLOSE 
 %token FOR
-%token EPSILON
 %token ELIF
 
 %%
@@ -94,7 +61,7 @@ program:        MAINPROG ID SEMI declarations subprogram_declarations compound_s
        ;
 
 declarations:       type identifier_list SEMI declarations 
-            |       EPSILON
+            |       %empty
             ;
 identifier_list:    ID
                |	ID COMMA identifier_list
@@ -109,7 +76,7 @@ standard_type:      INT
              ;
 
 subprogram_declarations:        subprogram_declaration subprogram_declarations
-                       |        EPSILON
+                       |        %empty
                        ;
 
 subprogram_declaration:     subprogram_head declarations compound_statement
@@ -120,7 +87,7 @@ subprogram_head:        FUNCTION ID arguments COLON standard_type SEMI
                ;
 
 arguments:      POPEN parameter_list PCLOSE
-         |      EPSILON
+         |      %empty
          ;
 
 parameter_list:     identifier_list COLON type
@@ -147,7 +114,7 @@ statement:      variable ASSIGN expression
 */
 
 else_statement :   ELSE COLON statement
-	       |   EPSILON   
+	       |   %empty   
                ;
 
 elsable_statement : if_statement else_statement
@@ -159,7 +126,7 @@ if_statement:       IF expression COLON statement elif_statement
             ;
 
 elif_statement:     ELIF expression COLON statement elif_statement
-	      |     EPSILON
+	      |     %empty
               ;
 
 while_statement :    WHILE expression COLON statement                 ;
@@ -178,7 +145,7 @@ variable :	ID
 procedure_statement :       ID POPEN actual_parameter_expression PCLOSE
                     ;
 
-actual_parameter_expression :       EPSILON
+actual_parameter_expression :       %empty
                             |       expression_list
                             ;
 
@@ -226,3 +193,34 @@ addop :     '+' /*sign*/
 multop :        '*'
        |        '/'
       ;
+
+%%
+
+int main()
+{
+
+	FILE *fp; 
+	char filename[50]; 
+	
+	printf("Enter the filename: \n"); 
+	scanf("%s",filename); 
+
+	fp = fopen(filename,"r"); 
+
+	if(!fp)
+	{
+		fprintf(stderr,"could not open file %s\n",filename);
+		return 0;
+	}
+
+	yyin = fp; 
+	do{
+		yyparse();
+	}while(!feof(yyin));
+
+	
+	return 0 ;
+	
+
+
+}

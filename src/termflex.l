@@ -27,7 +27,6 @@ begin	 		{printf("start!"); return START;}
 while			{return WHILE;}
 print	 		{return PRINT;}
 return	 		{return RETURN;}
-epsilon			{return EPSILON;}
 mainprog 		{return MAINPROG;}
 function 		{return FUNCTION;}
 procedure		{return PROCEDURE;}
@@ -60,8 +59,8 @@ float           {return FLOAT;}
 "["			{ return BOPEN;}
 "]"			{return BCLOSE;}
 
-\\          spaceCount++;
-[ \t]+ 		spaceCount++;
+\\                      spaceCount++;
+[ \t]+ 		        spaceCount++;
 \n 			lineNumber++;
 %%
 
