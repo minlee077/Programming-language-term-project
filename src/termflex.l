@@ -4,23 +4,25 @@
 int spaceCount = 1;
 int sourceLineCount = 1;
 int charLength = 0;
-extern int lineNumber; 
+int lineNumber;
 
-int yywarp(void)
+int yywrap(void)
 {
     return 1;
 }
 /*Define*/
 %}
+LETTER          [a-zA-Z]
+DIGIT          [0-9]
 %%
-"in" 			{return IN;}
+in 			{return IN;}
 if 			{return IF;}
 for			{return FOR;}
 end 			{return END;}
 nop 			{return NOP;}
 then 			{return THEN;}
 else 			{return ELSE;}
-begin	 		{return BEGIN;}
+begin	 		{return START;}
 while			{return WHILE;}
 print	 		{return PRINT;}
 return	 		{return RETURN;}
@@ -31,11 +33,9 @@ procedure		{return PROCEDURE;}
 elif			{return ELIF;}
 int             {return INT;}
 float           {return FLOAT;}
-[a-zA-Z]		{return LETTER;}
-[0-9]			{return DIGIT;}
 DIGIT+			{return INTNUM;}
 INTNUM.INTNUM+		{return FLOATNUM;}
-LETTER(LETTER|DIGIT)*   {return ID}
+LETTER(LETTER|DIGIT)*   {printf("ID"); return ID;}
 
 \+			{return PLUS;}
 \-			{return MINUS;}
@@ -56,7 +56,7 @@ LETTER(LETTER|DIGIT)*   {return ID}
 "("			{return POPEN;}
 ")"			{return PCLOSE;}
 ":"			{return COLON;}
-"["			{return BOPEN;}
+"["			{printf("["); return BOPEN;}
 "]"			{return BCLOSE;}
 
 Comment     ;
@@ -64,4 +64,38 @@ Comment     ;
 [ \t]+ 		spaceCount++;
 \n 			lineNumber++;
 %%
+
 /*user subprogram*/
+int main()
+{
+
+	FILE *fp; 
+	char filename[50]; 
+	
+	printf("Enter the filename: \n"); 
+	scanf("%s",filename); 
+
+	fp = fopen(filename,"r"); 
+
+	if(!fp)
+	{
+		fprintf(stderr,"could not open file %s\n",filename);
+		return 0;
+	} else {
+		fprintf(stderr, "%p : %s", fp, filename);
+		return 0;
+	}
+		
+	printf("hello");
+
+	yyin = fp; 
+
+	yylex();  
+	
+	printf("hello");
+	
+	return 0 ;
+	
+
+}
+

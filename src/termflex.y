@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+extern int lineNumber;
 
 void yyerror(const char *str)
 {
@@ -19,6 +20,7 @@ main()
 }
 %}
 
+
 %token INTNUM
 %token ID
 %token INT
@@ -27,7 +29,7 @@ main()
 %token MAINPROG
 %token FUNCTION 
 %token PROCEDURE
-%token BEGIN 
+%token START
 %token END
 %token IF
 %token THEN 
@@ -74,12 +76,8 @@ identifier_list:    ID
                ;
 
 type:       standard_type
-    |       standard_type BOPEN num BCLOSE
+    |       standard_type BOPEN INTNUM BCLOSE
     ;
-
-num:        INTNUM
-   |        FLOATNUM
-   ;
 
 standard_type:      INT
              |      FLOAT
@@ -104,7 +102,7 @@ parameter_list:     identifier_list COLON type
               |     identifier_list COLON type SEMI parameter_list
               ;
 
-compound_statement:     BEGIN statement_list END
+compound_statement:     START statement_list END
                   ;
 
 statement_list:     statement
