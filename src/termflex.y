@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 extern int lineNumber;
-
+extern int yylex();
+extern FILE* yyin;
 void yyerror(const char *str)
 {
     fprintf(stderr, "error : %s\n", str);
@@ -16,7 +17,31 @@ int yywrap()
 
 main()
 {
-    yyparse();
+
+	FILE *fp; 
+	char filename[50]; 
+	
+	printf("Enter the filename: \n"); 
+	scanf("%s",filename); 
+
+	fp = fopen(filename,"r"); 
+
+	if(!fp)
+	{
+		fprintf(stderr,"could not open file %s\n",filename);
+		return 0;
+	}
+
+	yyin = fp; 
+	do{
+		yyparse();
+	}while(!feof(yyin));
+
+	
+	return 0 ;
+	
+
+
 }
 %}
 

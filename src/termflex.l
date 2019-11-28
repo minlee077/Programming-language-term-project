@@ -4,7 +4,7 @@
 int spaceCount = 1;
 int sourceLineCount = 1;
 int charLength = 0;
-int lineNumber;
+int lineNumber=0;
 
 int yywrap(void)
 {
@@ -14,15 +14,16 @@ int yywrap(void)
 %}
 LETTER          [a-zA-Z]
 DIGIT          [0-9]
+IDS    [a-zA-Z][a-zA-Z0-9]*
 %%
 in 			{return IN;}
 if 			{return IF;}
 for			{return FOR;}
-end 			{return END;}
+end 			{printf("end1"); return END;}
 nop 			{return NOP;}
 then 			{return THEN;}
 else 			{return ELSE;}
-begin	 		{return START;}
+begin	 		{printf("start!"); return START;}
 while			{return WHILE;}
 print	 		{return PRINT;}
 return	 		{return RETURN;}
@@ -33,9 +34,9 @@ procedure		{return PROCEDURE;}
 elif			{return ELIF;}
 int             {return INT;}
 float           {return FLOAT;}
-DIGIT+			{return INTNUM;}
-INTNUM.INTNUM+		{return FLOATNUM;}
-LETTER(LETTER|DIGIT)*   {printf("ID"); return ID;}
+{DIGIT}+			{printf("num"); return INTNUM;}
+{DIGIT}+.{DIGIT}+		{printf("float");return FLOATNUM;}
+{IDS}   {printf("hello\n"); return ID;}
 
 \+			{return PLUS;}
 \-			{return MINUS;}
@@ -56,16 +57,16 @@ LETTER(LETTER|DIGIT)*   {printf("ID"); return ID;}
 "("			{return POPEN;}
 ")"			{return PCLOSE;}
 ":"			{return COLON;}
-"["			{printf("["); return BOPEN;}
+"["			{ return BOPEN;}
 "]"			{return BCLOSE;}
 
-Comment     ;
 \\          spaceCount++;
 [ \t]+ 		spaceCount++;
 \n 			lineNumber++;
 %%
 
 /*user subprogram*/
+/*
 int main()
 {
 
@@ -82,20 +83,19 @@ int main()
 		fprintf(stderr,"could not open file %s\n",filename);
 		return 0;
 	} else {
-		fprintf(stderr, "%p : %s", fp, filename);
-		return 0;
+		fprintf(stderr, "%p : %s\n", fp, filename);
 	}
+	printf("hello \n");
 		
-	printf("hello");
 
 	yyin = fp; 
 
 	yylex();  
 	
-	printf("hello");
-	
+	fclose(yyin);
+
+        printf("hello \n");
 	return 0 ;
-	
 
 }
-
+*/
