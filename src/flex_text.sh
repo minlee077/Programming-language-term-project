@@ -1,3 +1,4 @@
 flex termflex.l
-gcc lex.yy.c
-
+bison -d termflex.y
+gcc lex.yy.c -o termflex -lfl
+./termflex
