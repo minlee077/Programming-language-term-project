@@ -55,6 +55,9 @@ void yyerror(const char *str)
 %token FOR
 %token ELIF
 
+%precedence COLON
+%precedence ELSE
+
 %%
 
 program:        MAINPROG ID SEMI declarations subprogram_declarations compound_statement
@@ -125,8 +128,8 @@ elsable_statement : if_statement else_statement
 if_statement:       IF expression COLON statement elif_statement
             ;
 
-elif_statement:     ELIF expression COLON statement elif_statement
-	      |     %empty
+elif_statement:     %empty
+	      |    ELIF expression COLON statement elif_statement
               ;
 
 while_statement :    WHILE expression COLON statement                 ;
@@ -186,12 +189,12 @@ relop :     ELARGER
       | 	NEQUAL
       ;
 
-addop :     '+' /*sign*/
-      |     '-'
+addop :     PLUS /*sign*/
+      |     MINUS
       ;
 
-multop :        '*'
-       |        '/'
+multop :        MULT
+       |        DIVISION
       ;
 
 %%
