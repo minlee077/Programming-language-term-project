@@ -36,7 +36,6 @@ float           {printf("%s", yytext);return FLOAT;}
 {DIGIT}+			{printf("%s", yytext); return INTNUM;}
 {DIGIT}+.{DIGIT}+		{printf("%s", yytext);return FLOATNUM;}
 {IDS}   {printf("%s", yytext); return ID;}
-
 "+"			{printf("%s", yytext);return PLUS;}
 "-"			{printf("%s", yytext);return MINUS;}
 "*"			{printf("%s ", yytext);return MULT;}
