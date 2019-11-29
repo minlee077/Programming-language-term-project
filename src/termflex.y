@@ -55,9 +55,7 @@ void yyerror(const char *str)
 %token FOR
 %token ELIF
 
-%precedence COLON
-%precedence ELSE
-
+%right ELIF ELSE WHILE FOR COLON
 %%
 
 program:        MAINPROG ID SEMI declarations subprogram_declarations compound_statement
@@ -109,32 +107,26 @@ statement:      variable ASSIGN expression
          |      procedure_statement
          |      compound_statement
          |  	RETURN expression
-         |      elsable_statement
+         |      if_statement
+		 |      while_statement 
+         |      for_statement 
          |  	NOP
          ;
 
-/*else_statement:     ELSE COLON statement
-*/
-
-else_statement :   ELSE COLON statement
-	       |   %empty   
-               ;
-
-elsable_statement : if_statement else_statement
-		  | while_statement else_statement
-                  | for_statement else_statement
-                  ;
-
-if_statement:       IF expression COLON statement elif_statement
+if_statement:       IF expression COLON statement elif_statement ELSE COLON statement
+            |       IF expression COLON statement elif_statement 
             ;
 
-elif_statement:     %empty
-	      |    ELIF expression COLON statement elif_statement
+elif_statement:    %empty
+	          |    ELIF expression COLON statement elif_statement
               ;
 
-while_statement :    WHILE expression COLON statement                 ;
+while_statement  :    WHILE expression COLON statement ELSE COLON statement 
+                 |    WHILE expression COLON statement
+                 ;
 
-for_statement :     FOR in_expression COLON statement
+for_statement :     FOR in_expression COLON statement ELSE COLON statement
+              |     FOR in_expression COLON statement
               ;
 
 print_statement :       PRINT
