@@ -12,8 +12,6 @@ void yyerror(const char *str)
     fprintf(stderr, "error : %s\n", str);
 }
 
-
-
 %}
 
 %union {
@@ -22,35 +20,20 @@ char* str;
 int ival; 
 double dval;
 
-intVarT intVar;
-doubleVarT doubleVar;
 variableT variable;
 functionT function;
 /*
-typedef struct _iv{
-int ival; 
-int length;
-char* typeName;
-}intVarT;
-
 typedef struct _dv{
 int ival; 
 int length;
-char* typeName;
-}doubleVarT;
-
-typedef struct _v{
-doubleVarT* dV;
-intVarT* iV;
+char* varName;
 }variableT;
 
 typedef struct _f{
-char* name;
+char* functionName;
 variableT* ret;
 variableT** args;
 }functionT;
-
-
 */
 }
 
@@ -98,6 +81,7 @@ variableT** args;
 %token ELIF
 
 %right ELIF ELSE WHILE FOR IF COLON
+
 
 
 %%
@@ -179,7 +163,7 @@ print_statement :       PRINT
                 |       PRINT POPEN expression PCLOSE
                 ;
 
-variable :	ID {printf("\n ID VALUE : %s \n",$1);}
+variable :	ID 
          |	ID BOPEN expression BCLOSE
            ;
 
@@ -207,9 +191,9 @@ term :      factor
      |      factor multop term
      ;
 
-factor :        INTNUM 
+factor :        INTNUM
        |        FLOATNUM
-       |    	variable
+      |    	variable 
        |    	procedure_statement
        |    	NOT factor
        |    	sign factor

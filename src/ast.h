@@ -1,24 +1,11 @@
-typedef struct _iv{
-int ival; 
-int length;
-char* typeName;
-}intVarT;
-
 typedef struct _dv{
-int ival; 
+double value; 
 int length;
-char* typeName;
-}doubleVarT;
-
-typedef struct _v{
-doubleVarT* dV;
-intVarT* iV;
+char* varName;
 }variableT;
 
 typedef struct _f{
-char* name;
+char* functionName;
 variableT* ret;
 variableT** args;
 }functionT;
-
-
