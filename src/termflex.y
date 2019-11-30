@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "ast.h"
 extern int lineNumber;
 extern int yylex();
 //extern YYSTYPE yylval;
@@ -10,18 +11,9 @@ void yyerror(const char *str)
 {
     fprintf(stderr, "error : %s\n", str);
 }
-/* 
-struct{
-doubleVar* dV;
-intVar* iV;
-}variable;
 
-struct{
-char* name;
-variable* ret;
-variable** args;
-}function;
-*/
+
+
 %}
 
 %union {
@@ -30,18 +22,36 @@ char* str;
 int ival; 
 double dval;
 
-struct {
+intVarT intVar;
+doubleVarT doubleVar;
+variableT variable;
+functionT function;
+/*
+typedef struct _iv{
 int ival; 
 int length;
 char* typeName;
-}intVar;
+}intVarT;
 
-struct {
+typedef struct _dv{
 int ival; 
 int length;
 char* typeName;
-}doubleVar;
+}doubleVarT;
 
+typedef struct _v{
+doubleVarT* dV;
+intVarT* iV;
+}variableT;
+
+typedef struct _f{
+char* name;
+variableT* ret;
+variableT** args;
+}functionT;
+
+
+*/
 }
 
 

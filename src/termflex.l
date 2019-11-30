@@ -1,6 +1,8 @@
 %{
 #include <stdio.h>
+#include "ast.h"
 #include "termflex.tab.h"
+
 int spaceCount = 1;
 int sourceLineCount = 1;
 int charLength = 0;
