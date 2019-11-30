@@ -5,11 +5,75 @@
 #include "ast.h"
 extern int lineNumber;
 extern int yylex();
-//extern YYSTYPE yylval;
+
+#define MAXIMUM 100
+#define ERROR -1 
+
+// to trac current index
+int currentIndex = 0;
+// id array to manage ids.
+char* ids[MAXIMUM];
+// id range array to manage arrays
+int range[MAXIMUM];
+
+// assign id. 
+int assign(char* name){
+    if(currentIndex >= 100 || currentIndex < 0){
+        return 0;
+    }
+    ids[currentIndex++] = name;
+    return 1;
+}
+
+// need to figure out the value size is integer.
+int assignArraySize(const int index ,const int size){
+    if(size < 0){
+        return 0;
+    }
+    range[index] = size;
+    return 1;
+}
+// by the id value, get the index.
+int getIdIndex(const char *name){
+    int i;
+    for(i = 0; i < currentIndex;i++){
+        if(!(strcmp(ids[i], name))){
+            return i;
+        }
+    }
+    return ERROR;
+}
+
+// be access point, check if that it is out of range.
+int isIdRangeOk(int idNum,int accessNum){
+    if(range[idNum] > accessNum){
+        return 0;
+    } 
+    return 1;
+}
+
+//free array by replacing with last value.
+// if there is no last value, then just ignore value with moving currentIndex forward. 
+int freeId(const char* name){
+    int id = getIdIndex(name);
+    if(id != ERROR && currentIndex > 1){
+        ids[id] = ids[currentIndex];
+        range[id] = range[currentIndex];
+        currentIndex--;
+        return 1;
+    } else if(currentIndex == 1){
+        currentIndex--;
+        return 1;
+    }
+    return 0;
+}
+
+
+
 extern FILE* yyin;
 void yyerror(const char *str)
 {
-    fprintf(stderr, "error : %s\n", str);
+    fprintf(stderr, "error : %s at %d line \n", str,lineNumber);
 }
 
 %}
@@ -22,19 +86,6 @@ double dval;
 
 variableT variable;
 functionT function;
-/*
-typedef struct _dv{
-int ival; 
-int length;
-char* varName;
-}variableT;
-
-typedef struct _f{
-char* functionName;
-variableT* ret;
-variableT** args;
-}functionT;
-*/
 }
 
 
@@ -57,8 +108,8 @@ variableT** args;
 %token RETURN 
 %token PRINT 
 %token IN 
-%token PLUS
-%token MINUS
+%token <str>PLUS
+%token <str>MINUS
 %token MULT 
 %token DIVISION 
 %token ESMALLER 
@@ -82,8 +133,10 @@ variableT** args;
 
 %right ELIF ELSE WHILE FOR IF COLON
 
-
 %type <variable> variable
+%type <dval> factor procedure_statement term simple_expression expression
+%type <str> sign
+
 %%
 
 program:        MAINPROG ID SEMI declarations subprogram_declarations compound_statement
@@ -92,10 +145,41 @@ program:        MAINPROG ID SEMI declarations subprogram_declarations compound_s
 declarations:       type identifier_list SEMI declarations 
             |       %empty
             ;
+
+/*
 identifier_list:    ID
                |	ID COMMA identifier_list
                ;
+*/
 
+identifier_list:
+               ID
+                    {
+                       if(getIdIndex($1)==ERROR){
+                           if(currentIndex < MAXIMUM){
+                               assign($1);
+                           }else{
+                               yyerror("too many ids");
+                           }
+                       }else
+{
+                      yyerror("already declared"); 
+}
+                   }
+               |   ID COMMA identifier_list{ 
+                   if(getIdIndex($1)==ERROR){
+                           if(currentIndex < MAXIMUM){
+                               assign($1);
+                           }else{
+                               yyerror("too many ids");
+                           }
+                       }
+else{
+
+yyerror("already declared");
+}
+                   }
+               ;
 type:       standard_type
     |       standard_type BOPEN INTNUM BCLOSE
     ;
@@ -164,10 +248,13 @@ print_statement :       PRINT
                 ;
 
 variable :	ID  {$$.varName = $1;}
-         |	ID BOPEN expression BCLOSE {$$.varName = $1;}
+         |	ID BOPEN expression BCLOSE {$$.varName = $1;
+                                            if((int)($3)!=$3)
+                                                yyerror("array index error parameter not integer");
+                                        }
          ;
 
-procedure_statement :       ID POPEN actual_parameter_expression PCLOSE
+procedure_statement :       ID POPEN actual_parameter_expression PCLOSE {$$ = 1;}
                     ;
 
 actual_parameter_expression :       %empty
@@ -178,25 +265,31 @@ expression_list :       expression
                 |       expression COMMA expression_list
                 ;
 
-expression :        simple_expression
-           |        simple_expression relop simple_expression  /* here*/
+expression :        simple_expression {$$ = $1;}
+           |        simple_expression relop simple_expression  {$$ = $1;}
            ;
 in_expression :    expression IN expression
               ;
-simple_expression:      term
-                 |      term addop simple_expression
+simple_expression:      term {$$ = $1;}
+                 |      term addop simple_expression {$$ = $1 + $3;}
                  ;
-
-term :      factor
-     |      factor multop term
+/*처리필요 */
+term :      factor {$$ = $1;}
+     |      factor multop term {$$ = $1 * $3;}
      ;
 
-factor :        INTNUM
-       |        FLOATNUM
-       |    	variable 
-       |    	procedure_statement
-       |    	NOT factor
-       |    	sign factor
+factor :        INTNUM { $$=$1;}
+       |        FLOATNUM {$$=$1;}
+       |    	variable {$$=$1.value;}
+       |    	procedure_statement {$$ = 0;}
+       |    	NOT factor { $$ = $2;}
+       |    	sign factor { /*
+                                if($1.str=='+')
+                                $$ = $2;
+                              else
+                                $$ = -$2;
+*/ $$= $2;
+                            }
        ;
 
 sign:       PLUS
