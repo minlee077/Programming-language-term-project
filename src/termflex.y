@@ -10,39 +10,7 @@ void yyerror(const char *str)
     fprintf(stderr, "error : %s\n", str);
 }
 
-int yywrap()
-{
-     return 1;
-}
 
-main()
-{
-
-	FILE *fp; 
-	char filename[50]; 
-	
-	printf("Enter the filename: \n"); 
-	scanf("%s",filename); 
-
-	fp = fopen(filename,"r"); 
-
-	if(!fp)
-	{
-		fprintf(stderr,"could not open file %s\n",filename);
-		return 0;
-	}
-
-	yyin = fp; 
-	do{
-		yyparse();
-	}while(!feof(yyin));
-
-	
-	return 0 ;
-	
-
-
-}
 %}
 
 
@@ -85,16 +53,16 @@ main()
 %token BOPEN 
 %token BCLOSE 
 %token FOR
-%token EPSILON
 %token ELIF
 
+%right ELIF ELSE WHILE FOR IF COLON
 %%
 
 program:        MAINPROG ID SEMI declarations subprogram_declarations compound_statement
        ;
 
 declarations:       type identifier_list SEMI declarations 
-            |       EPSILON
+            |       %empty
             ;
 identifier_list:    ID
                |	ID COMMA identifier_list
@@ -109,7 +77,7 @@ standard_type:      INT
              ;
 
 subprogram_declarations:        subprogram_declaration subprogram_declarations
-                       |        EPSILON
+                       |        %empty
                        ;
 
 subprogram_declaration:     subprogram_head declarations compound_statement
@@ -120,7 +88,7 @@ subprogram_head:        FUNCTION ID arguments COLON standard_type SEMI
                ;
 
 arguments:      POPEN parameter_list PCLOSE
-         |      EPSILON
+         |      %empty
          ;
 
 parameter_list:     identifier_list COLON type
@@ -139,32 +107,28 @@ statement:      variable ASSIGN expression
          |      procedure_statement
          |      compound_statement
          |  	RETURN expression
-         |      elsable_statement
+         |      if_statement
+		 |      while_statement 
+         |      for_statement 
          |  	NOP
          ;
 
-/*else_statement:     ELSE COLON statement
-*/
-
-else_statement :   ELSE COLON statement
-	       |   EPSILON   
-               ;
-
-elsable_statement : if_statement else_statement
-		  | while_statement else_statement
-                  | for_statement else_statement
-                  ;
-
-if_statement:       IF expression COLON statement elif_statement
+if_statement:       IF expression COLON statement ELIF elif_statement ELSE COLON statement
+            |       IF expression COLON statement ELIF elif_statement
+            |       IF expression COLON statement ELSE COLON statement
+            |       IF expression COLON statement
             ;
 
-elif_statement:     ELIF expression COLON statement elif_statement
-	      |     EPSILON
+elif_statement:    expression COLON statement 
+              |    expression COLON statement ELIF elif_statement
               ;
 
-while_statement :    WHILE expression COLON statement                 ;
+while_statement  :    WHILE expression COLON statement ELSE COLON statement 
+                 |    WHILE expression COLON statement
+                 ;
 
-for_statement :     FOR in_expression COLON statement
+for_statement :     FOR in_expression COLON statement ELSE COLON statement
+              |     FOR in_expression COLON statement
               ;
 
 print_statement :       PRINT
@@ -178,7 +142,7 @@ variable :	ID
 procedure_statement :       ID POPEN actual_parameter_expression PCLOSE
                     ;
 
-actual_parameter_expression :       EPSILON
+actual_parameter_expression :       %empty
                             |       expression_list
                             ;
 
@@ -219,10 +183,41 @@ relop :     ELARGER
       | 	NEQUAL
       ;
 
-addop :     '+' /*sign*/
-      |     '-'
+addop :     PLUS /*sign*/
+      |     MINUS
       ;
 
-multop :        '*'
-       |        '/'
+multop :        MULT
+       |        DIVISION
       ;
+
+%%
+
+int main()
+{
+
+	FILE *fp; 
+	char filename[50]; 
+	
+	printf("Enter the filename: \n"); 
+	scanf("%s",filename); 
+
+	fp = fopen(filename,"r"); 
+
+	if(!fp)
+	{
+		fprintf(stderr,"could not open file %s\n",filename);
+		return 0;
+	}
+
+	yyin = fp; 
+	do{
+		yyparse();
+	}while(!feof(yyin));
+
+	
+	return 0 ;
+	
+
+
+}
