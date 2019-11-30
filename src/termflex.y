@@ -15,6 +15,12 @@ int currentIndex = 0;
 char* ids[MAXIMUM];
 // id range array to manage arrays
 int range[MAXIMUM];
+// store id's type
+char* idType[MAXIMUM];
+// count number of declare to set type on every ids
+int numOfDeclare = 0;
+// trace setted values
+int numOfSetted = 0;
 
 // assign id. 
 int assign(char* name){
@@ -22,6 +28,7 @@ int assign(char* name){
         return 0;
     }
     ids[currentIndex++] = name;
+    numOfDeclare++;
     return 1;
 }
 
@@ -33,6 +40,18 @@ int assignArraySize(const int index ,const int size){
     range[index] = size;
     return 1;
 }
+int setIdType(char * type){
+    if(numOfDeclare == 0){
+        numOfSetted = 0;
+        return 0;
+    }
+
+    idType[currentIndex - 1 - numOfSetted] = type;
+    numOfDeclare--;
+    return 1;
+}
+
+
 // by the id value, get the index.
 int getIdIndex(const char *name){
     int i;
@@ -92,8 +111,8 @@ functionT function;
 
 %token <ival>INTNUM
 %token <str> ID
-%token INT
-%token FLOAT
+%token <str> INT
+%token <str> FLOAT
 %token <dval>FLOATNUM
 %token MAINPROG
 %token FUNCTION 
@@ -136,13 +155,14 @@ functionT function;
 %type <variable> variable
 %type <dval> factor procedure_statement term simple_expression expression
 %type <str> sign
-
+%type <str> type
+%type <str> standard_type
 %%
 
 program:        MAINPROG ID SEMI declarations subprogram_declarations compound_statement
        ;
 
-declarations:       type identifier_list SEMI declarations 
+declarations:       type identifier_list SEMI declarations { setIdType($1);}
             |       %empty
             ;
 
@@ -161,31 +181,29 @@ identifier_list:
                            }else{
                                yyerror("too many ids");
                            }
-                       }else
-{
-                      yyerror("already declared"); 
-}
+                       }else{
+                           yyerror("already declared"); 
+                       }
                    }
                |   ID COMMA identifier_list{ 
-                   if(getIdIndex($1)==ERROR){
+                       if(getIdIndex($1)==ERROR){
                            if(currentIndex < MAXIMUM){
                                assign($1);
                            }else{
                                yyerror("too many ids");
                            }
-                       }
-else{
+                       }else{
 
-yyerror("already declared");
-}
+                           yyerror("already declared");
+                       }
                    }
                ;
-type:       standard_type
-    |       standard_type BOPEN INTNUM BCLOSE
+type:       standard_type {$$ = $1;}
+    |       standard_type BOPEN INTNUM BCLOSE{$$ = $1;}
     ;
 
-standard_type:      INT
-             |      FLOAT
+standard_type:      INT {$$ = $1;}
+             |      FLOAT{$$=$1;}
              ;
 
 subprogram_declarations:        subprogram_declaration subprogram_declarations
