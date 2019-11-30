@@ -60,7 +60,7 @@ variableT** args;
 %token <str>ID
 %token INT
 %token FLOAT
-%token <double>FLOATNUM
+%token <dval>FLOATNUM
 %token MAINPROG
 %token FUNCTION 
 %token PROCEDURE
