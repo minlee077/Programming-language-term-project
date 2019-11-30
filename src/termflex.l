@@ -33,9 +33,9 @@ procedure		{printf("%s", yytext);return PROCEDURE;}
 elif			{printf("%s", yytext);return ELIF;}
 int             {printf("%s", yytext);return INT;}
 float           {printf("%s", yytext);return FLOAT;}
-{DIGIT}+			{printf("%s", yytext); return INTNUM;}
-{DIGIT}+.{DIGIT}+		{printf("%s", yytext);return FLOATNUM;}
-{IDS}   {printf("%s", yytext); return ID;}
+{DIGIT}+			{ yylval.ival = atoi(yytext);printf("%s", yytext); return INTNUM;}
+{DIGIT}+.{DIGIT}+       {yylval.dval=atof(yytext);printf("%s", yytext);return FLOATNUM;}
+{IDS}   { yylval.str = strdup(yytext);printf("%s", yytext); return ID;}
 "+"			{printf("%s", yytext);return PLUS;}
 "-"			{printf("%s", yytext);return MINUS;}
 "*"			{printf("%s ", yytext);return MULT;}

@@ -4,21 +4,53 @@
 #include <string.h>
 extern int lineNumber;
 extern int yylex();
+//extern YYSTYPE yylval;
 extern FILE* yyin;
 void yyerror(const char *str)
 {
     fprintf(stderr, "error : %s\n", str);
 }
+/* 
+struct{
+doubleVar* dV;
+intVar* iV;
+}variable;
 
-
+struct{
+char* name;
+variable* ret;
+variable** args;
+}function;
+*/
 %}
 
+%union {
 
-%token INTNUM
-%token ID
+char* str;
+int ival; 
+double dval;
+
+struct {
+int ival; 
+int length;
+char* typeName;
+}intVar;
+
+struct {
+int ival; 
+int length;
+char* typeName;
+}doubleVar;
+
+}
+
+
+
+%token <ival>INTNUM
+%token <str>ID
 %token INT
 %token FLOAT
-%token FLOATNUM
+%token <double>FLOATNUM
 %token MAINPROG
 %token FUNCTION 
 %token PROCEDURE
@@ -56,6 +88,8 @@ void yyerror(const char *str)
 %token ELIF
 
 %right ELIF ELSE WHILE FOR IF COLON
+
+
 %%
 
 program:        MAINPROG ID SEMI declarations subprogram_declarations compound_statement
@@ -98,7 +132,7 @@ parameter_list:     identifier_list COLON type
 compound_statement:     START statement_list END
                   ;
 
-statement_list:     statement
+statement_list:     statement SEMI
               |     statement SEMI statement_list
               ;
 
@@ -135,9 +169,9 @@ print_statement :       PRINT
                 |       PRINT POPEN expression PCLOSE
                 ;
 
-variable :	ID
+variable :	ID {printf("\n ID VALUE : %s \n",$1);}
          |	ID BOPEN expression BCLOSE
-         ;
+           ;
 
 procedure_statement :       ID POPEN actual_parameter_expression PCLOSE
                     ;
@@ -163,7 +197,7 @@ term :      factor
      |      factor multop term
      ;
 
-factor :        INTNUM
+factor :        INTNUM 
        |        FLOATNUM
        |    	variable
        |    	procedure_statement
