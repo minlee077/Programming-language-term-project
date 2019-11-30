@@ -40,7 +40,7 @@ variableT** args;
 
 
 %token <ival>INTNUM
-%token <str>ID
+%token <str> ID
 %token INT
 %token FLOAT
 %token <dval>FLOATNUM
@@ -83,7 +83,7 @@ variableT** args;
 %right ELIF ELSE WHILE FOR IF COLON
 
 
-
+%type <variable> variable
 %%
 
 program:        MAINPROG ID SEMI declarations subprogram_declarations compound_statement
@@ -163,9 +163,9 @@ print_statement :       PRINT
                 |       PRINT POPEN expression PCLOSE
                 ;
 
-variable :	ID 
-         |	ID BOPEN expression BCLOSE
-           ;
+variable :	ID  {$$.varName = $1;}
+         |	ID BOPEN expression BCLOSE {$$.varName = $1;}
+         ;
 
 procedure_statement :       ID POPEN actual_parameter_expression PCLOSE
                     ;
@@ -193,7 +193,7 @@ term :      factor
 
 factor :        INTNUM
        |        FLOATNUM
-      |    	variable 
+       |    	variable 
        |    	procedure_statement
        |    	NOT factor
        |    	sign factor
