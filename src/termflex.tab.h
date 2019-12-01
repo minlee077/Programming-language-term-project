@@ -93,7 +93,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 101 "termflex.y" /* yacc.c:1909  */
+#line 108 "termflex.y" /* yacc.c:1909  */
 
 
 char* str;

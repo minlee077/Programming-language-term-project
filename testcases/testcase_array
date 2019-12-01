@@ -1,0 +1,11 @@
+mainprog arrayTest;
+
+int[10] a;
+
+begin
+    a[9] = 1;
+    a[10] = 1;
+    a[1.1] = 2;
+    a[1+1] = 2;
+    a[1-2] = 2;
+end

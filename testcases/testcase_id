@@ -1,0 +1,11 @@
+mainprog testcaseId;
+
+int a;
+int b;
+int a;
+
+begin
+    a = 1;
+    b = 2.2;
+    c = 1;
+end

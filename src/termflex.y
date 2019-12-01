@@ -9,6 +9,13 @@ extern int yylex();
 #define MAXIMUM 100
 #define ERROR -1 
 
+extern FILE* yyin;
+void yyerror(const char *str)
+{
+    fprintf(stderr, "error : %s at %d line \n", str,lineNumber);
+}
+
+
 // to trac current index
 int currentIndex = 0;
 // id array to manage ids.
@@ -20,6 +27,18 @@ char* idType[MAXIMUM];
 // count number of declare to set type on every ids
 int numOfDeclare = 0;
 
+// by the id value, get the index.
+int getIdIndex(const char *name){
+    int i;
+    for(i = 0; i < currentIndex;i++){
+        if(!(strcmp(ids[i], name))){
+            return i;
+        }
+    }
+    return ERROR;
+}
+
+
 // assign id. 
 int assign(char* name){
     if(currentIndex >= MAXIMUM || currentIndex < 0){
@@ -27,8 +46,10 @@ int assign(char* name){
     }
     // same name declaration
     int id = getIdIndex(name);
-    if(id == ERROR)
-        yyerror("already declared"); 
+    if(id == ERROR){
+        yyerror("already declared");
+        return 0;
+    } 
     else
         ids[currentIndex++] = name;
     numOfDeclare++;
@@ -59,18 +80,6 @@ int setIdType(char * type, int size){
     return 1;
 }
 
-
-// by the id value, get the index.
-int getIdIndex(const char *name){
-    int i;
-    for(i = 0; i < currentIndex;i++){
-        if(!(strcmp(ids[i], name))){
-            return i;
-        }
-    }
-    return ERROR;
-}
-
 // be access point, check if that it is out of range.
 int isIdRangeOk(int idNum,int accessNum){
     if(range[idNum] > accessNum){
@@ -94,13 +103,6 @@ int freeId(const char* name){
     }
     return 0;
 }
-
-extern FILE* yyin;
-void yyerror(const char *str)
-{
-    fprintf(stderr, "error : %s at %d line \n", str,lineNumber);
-}
-
 %}
 
 %union {
@@ -208,12 +210,12 @@ subprogram_declarations:        subprogram_declaration subprogram_declarations
 subprogram_declaration:     subprogram_head declarations compound_statement
                       ;
 
-subprogram_head:        FUNCTION ID arguments COLON standard_type SEMI {assign($2);setIdType("function", 0);}
+subprogram_head:        FUNCTION ID arguments COLON standard_type SEMI { if(!assign($2))setIdType("function", 0);}
                |        PROCEDURE ID arguments SEMI 
                         {
                             
-                            assign($2);
-                            setIdType("procedure", 0);
+                            if(!assign($2))
+                                setIdType("procedure", 0);
                             
                         }
                ;
@@ -297,7 +299,7 @@ variable :	ID  {
                                             strcpy(tmpstr,"variable undefined:");
                                             strcat(tmpstr,$1);
                                             yyerror($1);
-                                        }else if($3 > range[id] || $3 < 0)
+                                        }else if($3 > range[id]-1 || $3 < 0)
                                             yyerror("nout of range error");	
                                         if((int)($3)!=$3)
                                             yyerror("array index error parameter not integer");
