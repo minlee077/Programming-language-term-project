@@ -19,12 +19,15 @@ int range[MAXIMUM];
 char* idType[MAXIMUM];
 // count number of declare to set type on every ids
 int numOfDeclare = 0;
+// count number of declare in each identifier_list
+int numOfDeclareList = 0;
 // trace setted values
-int numOfSetted = 0;
+int numOfSetted[MAXIMUM];
+// 
 
 // assign id. 
 int assign(char* name){
-    if(currentIndex >= 100 || currentIndex < 0){
+    if(currentIndex >= MAXIMUM || currentIndex < 0){
         return 0;
     }
     ids[currentIndex++] = name;
@@ -42,11 +45,11 @@ int assignArraySize(const int index ,const int size){
 }
 int setIdType(char * type){
     if(numOfDeclare == 0){
-        numOfSetted = 0;
         return 0;
     }
-
-    idType[currentIndex - 1 - numOfSetted] = type;
+    
+    // because it is LR parser. Store reversely.
+    idType[currentIndex - 1] = type;
     numOfDeclare--;
     return 1;
 }
@@ -86,8 +89,6 @@ int freeId(const char* name){
     }
     return 0;
 }
-
-
 
 extern FILE* yyin;
 void yyerror(const char *str)
@@ -162,6 +163,7 @@ functionT function;
 program:        MAINPROG ID SEMI declarations subprogram_declarations compound_statement
        ;
 
+/* decleared with comma are not processed*/
 declarations:       type identifier_list SEMI declarations { setIdType($1);}
             |       %empty
             ;
@@ -178,6 +180,7 @@ identifier_list:
                        if(getIdIndex($1)==ERROR){
                            if(currentIndex < MAXIMUM){
                                assign($1);
+                               numOfSetted[numOfDeclare++]++;
                            }else{
                                yyerror("too many ids");
                            }
@@ -189,6 +192,7 @@ identifier_list:
                        if(getIdIndex($1)==ERROR){
                            if(currentIndex < MAXIMUM){
                                assign($1);
+                               numOfSetted[numOfDeclare]++;
                            }else{
                                yyerror("too many ids");
                            }
@@ -232,7 +236,19 @@ statement_list:     statement SEMI
               |     statement SEMI statement_list
               ;
 
-statement:      variable ASSIGN expression
+statement:      variable ASSIGN expression {
+	            /*
+	            char* type;
+                    if((int)$3 == $3)
+                        type="int";
+                    else
+                        type="float";
+                    
+                    if(type != idType[getIdIndex($1.varName)]){
+                        yyerror("wrong type. Assgin error");
+                    }
+                   */
+                } 
          |      print_statement
          |      procedure_statement
          |      compound_statement
