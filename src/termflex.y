@@ -38,7 +38,8 @@ int assignArraySize(const int index ,const int size){
     range[index] = size;
     return 1;
 }
-int setIdType(char * type){
+
+int setIdType(char * type, int size){
     if(numOfDeclare == 0){
         return 0;
     }
@@ -47,6 +48,7 @@ int setIdType(char * type){
     for(i = 0; i < numOfDeclare;i++){
         // because it is LR parser. Store reversely.
         idType[currentIndex - 1 - i] = type;
+        assignArraySize(currentIndex -i -1, size);
     }
     numOfDeclare = 0;
     return 1;
@@ -166,7 +168,8 @@ declarations:       declaration declarations
             |       %empty
             ;
 
-declaration:    type identifier_list SEMI{   setIdType($1);}
+declaration:    type identifier_list SEMI{   setIdType($1, 0);}
+           |    type BOPEN INTNUM BCLOSE identifier_list SEMI {setIdType($1, $3);}
            ;
 
 identifier_list:
@@ -196,7 +199,6 @@ identifier_list:
                    }
                ;
 type:       standard_type {$$ = $1;}
-    |       standard_type BOPEN INTNUM BCLOSE{$$ = $1;}
     ;
 
 standard_type:      INT {$$ = $1;}
@@ -210,8 +212,8 @@ subprogram_declarations:        subprogram_declaration subprogram_declarations
 subprogram_declaration:     subprogram_head declarations compound_statement
                       ;
 
-subprogram_head:        FUNCTION ID arguments COLON standard_type SEMI {assign($2);setIdType("function");}
-               |        PROCEDURE ID arguments SEMI {assign($2);setIdType("procedure");}
+subprogram_head:        FUNCTION ID arguments COLON standard_type SEMI {assign($2);setIdType("function", 0);}
+               |        PROCEDURE ID arguments SEMI {assign($2);setIdType("procedure", 0);}
                ;
 
 arguments:      POPEN parameter_list PCLOSE
