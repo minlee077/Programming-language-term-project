@@ -25,7 +25,12 @@ int assign(char* name){
     if(currentIndex >= MAXIMUM || currentIndex < 0){
         return 0;
     }
-    ids[currentIndex++] = name;
+    // same name declaration
+    int id = getIdIndex(name);
+    if(id == ERROR)
+        yyerror("already declared"); 
+    else
+        ids[currentIndex++] = name;
     numOfDeclare++;
     return 1;
 }
@@ -175,27 +180,18 @@ declaration:    type identifier_list SEMI{   setIdType($1, 0);}
 identifier_list:
                ID
                     {
-                       if(getIdIndex($1)==ERROR){
                            if(currentIndex < MAXIMUM){
                                assign($1);
                            }else{
                                yyerror("too many ids");
                            }
-                       }else{
-                           yyerror("already declared"); 
-                       }
                    }
                |   ID COMMA identifier_list{ 
-                       if(getIdIndex($1)==ERROR){
                            if(currentIndex < MAXIMUM){
                                assign($1);
                            }else{
                                yyerror("too many ids");
                            }
-                       }else{
-
-                           yyerror("already declared");
-                       }
                    }
                ;
 type:       standard_type {$$ = $1;}
@@ -213,7 +209,13 @@ subprogram_declaration:     subprogram_head declarations compound_statement
                       ;
 
 subprogram_head:        FUNCTION ID arguments COLON standard_type SEMI {assign($2);setIdType("function", 0);}
-               |        PROCEDURE ID arguments SEMI {assign($2);setIdType("procedure", 0);}
+               |        PROCEDURE ID arguments SEMI 
+                        {
+                            
+                            assign($2);
+                            setIdType("procedure", 0);
+                            
+                        }
                ;
 
 arguments:      POPEN parameter_list PCLOSE
@@ -279,7 +281,6 @@ print_statement :       PRINT
                 |       PRINT POPEN expression PCLOSE
                 ;
 
-<<<<<<< HEAD
 variable :	ID  {
                 char tmpstr[100]; 
                 if (getIdIndex($1)==ERROR){
