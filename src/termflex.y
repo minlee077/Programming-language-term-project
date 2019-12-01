@@ -19,11 +19,6 @@ int range[MAXIMUM];
 char* idType[MAXIMUM];
 // count number of declare to set type on every ids
 int numOfDeclare = 0;
-// count number of declare in each identifier_list
-int numOfDeclareList = 0;
-// trace setted values
-int numOfSetted[MAXIMUM];
-// 
 
 // assign id. 
 int assign(char* name){
@@ -47,10 +42,13 @@ int setIdType(char * type){
     if(numOfDeclare == 0){
         return 0;
     }
-    
-    // because it is LR parser. Store reversely.
-    idType[currentIndex - 1] = type;
-    numOfDeclare--;
+
+    int i;
+    for(i = 0; i < numOfDeclare;i++){
+        // because it is LR parser. Store reversely.
+        idType[currentIndex - 1 - i] = type;
+    }
+    numOfDeclare = 0;
     return 1;
 }
 
@@ -164,15 +162,12 @@ program:        MAINPROG ID SEMI declarations subprogram_declarations compound_s
        ;
 
 /* decleared with comma are not processed*/
-declarations:       type identifier_list SEMI declarations { setIdType($1);}
+declarations:       declaration declarations
             |       %empty
             ;
 
-/*
-identifier_list:    ID
-               |	ID COMMA identifier_list
-               ;
-*/
+declaration:    type identifier_list SEMI{   setIdType($1);}
+           ;
 
 identifier_list:
                ID
@@ -180,7 +175,6 @@ identifier_list:
                        if(getIdIndex($1)==ERROR){
                            if(currentIndex < MAXIMUM){
                                assign($1);
-                               numOfSetted[numOfDeclare++]++;
                            }else{
                                yyerror("too many ids");
                            }
@@ -192,7 +186,6 @@ identifier_list:
                        if(getIdIndex($1)==ERROR){
                            if(currentIndex < MAXIMUM){
                                assign($1);
-                               numOfSetted[numOfDeclare]++;
                            }else{
                                yyerror("too many ids");
                            }
