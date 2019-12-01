@@ -277,9 +277,23 @@ print_statement :       PRINT
                 |       PRINT POPEN expression PCLOSE
                 ;
 
-variable :	ID  {$$.varName = $1;}
-         |	ID BOPEN expression BCLOSE {$$.varName = $1;
-                                            if((int)($3)!=$3)
+variable :	ID  {
+                char tmpstr[100]; 
+                if (getIdIndex($1)==ERROR){
+                                    strcpy(tmpstr,"variable undefined:");
+                                    strcat(tmpstr,$1);
+                                    yyerror(tmpstr);
+                }
+                $$.varName = $1;}
+         |	ID BOPEN expression BCLOSE {
+                                        //printf("tests");
+                                        char tmpstr[100];
+                                        if(getIdIndex($1)==ERROR){
+                                            strcpy(tmpstr,"variable undefined:");
+                                            strcat(tmpstr,$1);
+                                            yyerror($1);
+                                        }
+                                               if((int)($3)!=$3)
                                                 yyerror("array index error parameter not integer");
                                         }
          ;
