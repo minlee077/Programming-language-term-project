@@ -235,17 +235,17 @@ statement_list:     statement SEMI
               ;
 
 statement:      variable ASSIGN expression {
-	            /*
 	            char* type;
                     if((int)$3 == $3)
                         type="int";
                     else
                         type="float";
-                    
-                    if(type != idType[getIdIndex($1.varName)]){
-                        yyerror("wrong type. Assgin error");
+                    int id = getIdIndex($1.varName);
+                    if(id != ERROR) {
+                        if(!strcmp(type,idType[id])){
+                            yyerror("wrong type. Assgin error");
+                        }
                     }
-                   */
                 } 
          |      print_statement
          |      procedure_statement
@@ -279,6 +279,7 @@ print_statement :       PRINT
                 |       PRINT POPEN expression PCLOSE
                 ;
 
+<<<<<<< HEAD
 variable :	ID  {
                 char tmpstr[100]; 
                 if (getIdIndex($1)==ERROR){
@@ -290,15 +291,17 @@ variable :	ID  {
          |	ID BOPEN expression BCLOSE {
                                         //printf("tests");
                                         char tmpstr[100];
-                                        if(getIdIndex($1)==ERROR){
+                                        int id = getIdIndex($1);
+                                        if(id == ERROR){
                                             strcpy(tmpstr,"variable undefined:");
                                             strcat(tmpstr,$1);
                                             yyerror($1);
-                                        }
-                                               if((int)($3)!=$3)
-                                                yyerror("array index error parameter not integer");
-                                        }
-         ;
+                                        }else if($3 > range[id] || $3 < 0)
+                                            yyerror("nout of range error");	
+                                        if((int)($3)!=$3)
+                                            yyerror("array index error parameter not integer");
+                                    }
+        ;
 
 procedure_statement :       ID POPEN actual_parameter_expression PCLOSE {$$ = 1;}
                     ;
