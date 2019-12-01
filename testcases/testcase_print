@@ -2,8 +2,10 @@ mainprog testCasePrint;
 
 int i;
 
+int i;
+
 begin
 	i = 1;
 	print(i+1);
-	print
+	print;
 end

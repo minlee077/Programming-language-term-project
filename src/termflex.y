@@ -210,17 +210,20 @@ subprogram_declarations:        subprogram_declaration subprogram_declarations
 subprogram_declaration:     subprogram_head declarations compound_statement
                       ;
 
-subprogram_head:        FUNCTION ID arguments COLON standard_type SEMI
-               |        PROCEDURE ID arguments SEMI
+subprogram_head:        FUNCTION ID arguments COLON standard_type SEMI {assign($2);setIdType("function");}
+               |        PROCEDURE ID arguments SEMI {assign($2);setIdType("procedure");}
                ;
 
 arguments:      POPEN parameter_list PCLOSE
          |      %empty
          ;
 
-parameter_list:     identifier_list COLON type
-              |     identifier_list COLON type SEMI parameter_list
+parameter_list:     parameter
+              |     parameter parameter_list
               ;
+
+parameter: identifier_list COLON type
+         ;
 
 compound_statement:     START statement_list END
                   ;
@@ -309,13 +312,12 @@ factor :        INTNUM { $$=$1;}
        |        FLOATNUM {$$=$1;}
        |    	variable {$$=$1.value;}
        |    	procedure_statement {$$ = 0;}
-       |    	NOT factor { $$ = $2;}
-       |    	sign factor { /*
-                                if($1.str=='+')
+       |    	NOT factor { $$ = !$2;}
+       |    	sign factor { 
+                              if(strcmp($1,"+"))
                                 $$ = $2;
                               else
                                 $$ = -$2;
-*/ $$= $2;
                             }
        ;
 
@@ -362,10 +364,6 @@ int main()
 	do{
 		yyparse();
 	}while(!feof(yyin));
-
 	
 	return 0 ;
-	
-
-
 }

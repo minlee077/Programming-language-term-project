@@ -90,7 +90,23 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 101 "termflex.y" /* yacc.c:1909  */
+
+
+char* str;
+int ival; 
+double dval;
+
+variableT variable;
+functionT function;
+
+#line 107 "termflex.tab.h" /* yacc.c:1909  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
